@@ -29,3 +29,25 @@ def build_text(tokenizer, target_tokens: int, *, sentence_words: int = 12) -> st
         index += sentence_words
         sentences.append(" ".join(words).capitalize() + ".")
     return " ".join(sentences)
+
+
+@pytest.fixture(scope="session")
+def embedder():
+    """The real embedding model. Slow to load, so session-scoped."""
+    from app.core.embeddings import Embedder
+
+    return Embedder("sentence-transformers/all-MiniLM-L6-v2")
+
+
+def make_chunk(text: str, index: int, *, page: int = 1):
+    """Minimal Chunk for storage tests, where offsets are not under test."""
+    from app.core.chunking import Chunk
+
+    return Chunk(
+        text=text,
+        token_count=max(1, len(text.split())),
+        chunk_index=index,
+        page_number=page,
+        char_start=0,
+        char_end=len(text),
+    )
