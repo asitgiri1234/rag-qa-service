@@ -107,9 +107,13 @@ Interactive docs at <http://127.0.0.1:8000/docs>.
 ### Test
 
 ```bash
-pytest                 # full suite
-pytest -m "not slow"   # skip tests that need the embedding model
+pytest                 # full suite (108 tests)
+pytest -m "not slow"   # 97 tests; skips those that load the embedding model
 ```
+
+`-m "not slow"` still downloads the tokenizer (~500 KB) on first run, since chunking
+is measured in that tokenizer's word-piece tokens. It does not load the ~90 MB
+embedding model.
 
 ---
 
