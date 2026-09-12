@@ -1,0 +1,572 @@
+[
+  {
+    "category": "vocabulary_mismatch",
+    "question": "How long may a passage be before the machine quietly clips the end off it?",
+    "note": "Avoids 'truncate', 'token' and '256'. The source sentence uses all three.",
+    "expected_answer_substring": "truncated at 256 word-piece tokens",
+    "expected_source_file": "embedding_models.md",
+    "answer_present_in_top5": false,
+    "first_hit_rank": null,
+    "below_floor": true,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.2297,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 2,
+        "page_number": 2,
+        "contains_answer": false,
+        "snippet": "Chunking Strategy Chunk size is the single most consequential parameter in the pipeline. Small chunks produce sharp, specific vectors but scatter a si"
+      },
+      {
+        "rank": 2,
+        "similarity": 0.2129,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 3,
+        "page_number": 2,
+        "contains_answer": false,
+        "snippet": "This ordering keeps semantic units intact wherever the document's own structure allows it. Overlap exists to protect facts that straddle a boundary. A"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.1877,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 5,
+        "page_number": 3,
+        "contains_answer": false,
+        "snippet": "Latency should be reported as percentiles rather than a mean, because the distribution has a long tail dominated by index warm-up. Top-1 similarity is"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.1687,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.1573,
+        "filename": "retrieval_evaluation.txt",
+        "chunk_index": 4,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Setting a similarity floor A floor discards results too weak to be worth sending to the model. It must be set from measurement. Run a set of questions"
+      }
+    ]
+  },
+  {
+    "category": "vocabulary_mismatch",
+    "question": "How wide is the numeric signature this system builds for each piece of writing?",
+    "note": "Avoids 'vector', 'dimension' and 'embedding'.",
+    "expected_answer_substring": "384 dimensions",
+    "expected_source_file": "embedding_models.md",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 1,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.4772,
+        "filename": "embedding_models.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "384 dimensions is small by current standards. Larger models such as all-mpnet-base-v2 produce 768-dimensional vectors and score several points higher "
+      },
+      {
+        "rank": 2,
+        "similarity": 0.4289,
+        "filename": "embedding_models.md",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "This is precisely why a character budget is unsafe. A 1000-character chunk of plain English prose is roughly 200 tokens and fits. The same 1000 charac"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.343,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 2,
+        "page_number": 2,
+        "contains_answer": false,
+        "snippet": "Chunking Strategy Chunk size is the single most consequential parameter in the pipeline. Small chunks produce sharp, specific vectors but scatter a si"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.326,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.3191,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 3,
+        "page_number": 2,
+        "contains_answer": false,
+        "snippet": "This ordering keeps semantic units intact wherever the document's own structure allows it. Overlap exists to protect facts that straddle a boundary. A"
+      }
+    ]
+  },
+  {
+    "category": "vocabulary_mismatch",
+    "question": "What navigational graph arranges the saved signatures so lookups stay quick?",
+    "note": "Avoids 'HNSW', 'index' and 'approximate'.",
+    "expected_answer_substring": "Hierarchical Navigable Small World",
+    "expected_source_file": "vector_stores.md",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 1,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.3793,
+        "filename": "vector_stores.md",
+        "chunk_index": 1,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "## HNSW The index used by Chroma is HNSW, Hierarchical Navigable Small World. It builds a layered graph in which each node links to a bounded number o"
+      },
+      {
+        "rank": 2,
+        "similarity": 0.3758,
+        "filename": "vector_stores.md",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "# Vector Stores and Approximate Search ## Exact versus approximate search A brute-force nearest-neighbour search compares the query vector against eve"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.3073,
+        "filename": "vector_stores.md",
+        "chunk_index": 5,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "## Metadata filtering Filtering before the vector search is what makes per-document queries possible. A filter on document identity restricts the cand"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.2911,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.2888,
+        "filename": "vector_stores.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "## Chroma Chroma is an embedded vector database. A PersistentClient writes to a local directory, so there is no server to run and no network hop on a "
+      }
+    ]
+  },
+  {
+    "category": "vocabulary_mismatch",
+    "question": "What lower bound stops feeble matches from reaching the language model?",
+    "note": "Avoids 'similarity', 'threshold' and 'floor of 0.25'.",
+    "expected_answer_substring": "floor of 0.25 separates them",
+    "expected_source_file": "retrieval_evaluation.txt",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 3,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.4677,
+        "filename": "embedding_models.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "384 dimensions is small by current standards. Larger models such as all-mpnet-base-v2 produce 768-dimensional vectors and score several points higher "
+      },
+      {
+        "rank": 2,
+        "similarity": 0.357,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.3549,
+        "filename": "retrieval_evaluation.txt",
+        "chunk_index": 4,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "Setting a similarity floor A floor discards results too weak to be worth sending to the model. It must be set from measurement. Run a set of questions"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.3318,
+        "filename": "embedding_models.md",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "# Embedding Models in Retrieval Systems ## What an embedding model does An embedding model maps a span of text to a fixed-length vector of floating po"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.3207,
+        "filename": "embedding_models.md",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "This is precisely why a character budget is unsafe. A 1000-character chunk of plain English prose is roughly 200 tokens and fits. The same 1000 charac"
+      }
+    ]
+  },
+  {
+    "category": "boundary_spanning",
+    "question": "How does the default model's vector width compare with all-mpnet-base-v2, and what is the default model's token limit?",
+    "note": "The 256-token limit ends chunk 1 and the mpnet comparison opens chunk 2 at the 180/40 configuration.",
+    "expected_answer_substring": "768-dimensional vectors",
+    "expected_source_file": "embedding_models.md",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 1,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.5514,
+        "filename": "embedding_models.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "384 dimensions is small by current standards. Larger models such as all-mpnet-base-v2 produce 768-dimensional vectors and score several points higher "
+      },
+      {
+        "rank": 2,
+        "similarity": 0.2874,
+        "filename": "embedding_models.md",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "This is precisely why a character budget is unsafe. A 1000-character chunk of plain English prose is roughly 200 tokens and fits. The same 1000 charac"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.2422,
+        "filename": "vector_stores.md",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "# Vector Stores and Approximate Search ## Exact versus approximate search A brute-force nearest-neighbour search compares the query vector against eve"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.216,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 2,
+        "page_number": 2,
+        "contains_answer": false,
+        "snippet": "Chunking Strategy Chunk size is the single most consequential parameter in the pipeline. Small chunks produce sharp, specific vectors but scatter a si"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.2101,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      }
+    ]
+  },
+  {
+    "category": "boundary_spanning",
+    "question": "What does Chroma return instead of a similarity, and what does it attach to a collection by default?",
+    "note": "The distance/similarity point closes chunk 2; the default embedding function opens chunk 3.",
+    "expected_answer_substring": "attaches its own embedding function",
+    "expected_source_file": "vector_stores.md",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 2,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.7578,
+        "filename": "vector_stores.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "## Chroma Chroma is an embedded vector database. A PersistentClient writes to a local directory, so there is no server to run and no network hop on a "
+      },
+      {
+        "rank": 2,
+        "similarity": 0.6271,
+        "filename": "vector_stores.md",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "By default Chroma also attaches its own embedding function to a collection and will happily embed raw text with a model of its own choosing. In a syst"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.5752,
+        "filename": "vector_stores.md",
+        "chunk_index": 1,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "## HNSW The index used by Chroma is HNSW, Hierarchical Navigable Small World. It builds a layered graph in which each node links to a bounded number o"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.4296,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.403,
+        "filename": "retrieval_evaluation.txt",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "The similarity score as a diagnostic The top-1 similarity score is the cheapest early warning available. When the best passage in the collection score"
+      }
+    ]
+  },
+  {
+    "category": "boundary_spanning",
+    "question": "What is the trade made by approximate search, and which graph implements it in Chroma?",
+    "note": "The recall/latency trade ends chunk 0; HNSW opens chunk 1.",
+    "expected_answer_substring": "Hierarchical Navigable Small World",
+    "expected_source_file": "vector_stores.md",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 1,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.6582,
+        "filename": "vector_stores.md",
+        "chunk_index": 1,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "## HNSW The index used by Chroma is HNSW, Hierarchical Navigable Small World. It builds a layered graph in which each node links to a bounded number o"
+      },
+      {
+        "rank": 2,
+        "similarity": 0.5531,
+        "filename": "vector_stores.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "## Chroma Chroma is an embedded vector database. A PersistentClient writes to a local directory, so there is no server to run and no network hop on a "
+      },
+      {
+        "rank": 3,
+        "similarity": 0.4432,
+        "filename": "vector_stores.md",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "# Vector Stores and Approximate Search ## Exact versus approximate search A brute-force nearest-neighbour search compares the query vector against eve"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.4104,
+        "filename": "vector_stores.md",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "By default Chroma also attaches its own embedding function to a collection and will happily embed raw text with a model of its own choosing. In a syst"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.3325,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      }
+    ]
+  },
+  {
+    "category": "multi_hop",
+    "question": "What vector width does the default model produce, and which graph index stores those vectors?",
+    "note": "384 is in embedding_models.md; HNSW is in vector_stores.md. No chunk holds both.",
+    "expected_answer_substring": "Hierarchical Navigable Small World",
+    "expected_source_file": "vector_stores.md",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 1,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.4332,
+        "filename": "vector_stores.md",
+        "chunk_index": 1,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "## HNSW The index used by Chroma is HNSW, Hierarchical Navigable Small World. It builds a layered graph in which each node links to a bounded number o"
+      },
+      {
+        "rank": 2,
+        "similarity": 0.3734,
+        "filename": "vector_stores.md",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "# Vector Stores and Approximate Search ## Exact versus approximate search A brute-force nearest-neighbour search compares the query vector against eve"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.3605,
+        "filename": "embedding_models.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "384 dimensions is small by current standards. Larger models such as all-mpnet-base-v2 produce 768-dimensional vectors and score several points higher "
+      },
+      {
+        "rank": 4,
+        "similarity": 0.3564,
+        "filename": "vector_stores.md",
+        "chunk_index": 4,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "pgvector puts vectors in PostgreSQL. It is the right answer when the vectors belong alongside relational data that already lives there, and when opera"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.334,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Retrieval Augmented Generation: Operating Notes A retrieval augmented generation system answers questions by first finding relevant passages in a docu"
+      }
+    ]
+  },
+  {
+    "category": "multi_hop",
+    "question": "Why must the same model encode both sides, and what does Chroma do by default that would violate it?",
+    "note": "The matching rule is the last chunk of embedding_models.md; the Chroma default is in vector_stores.md.",
+    "expected_answer_substring": "vectors from two different models",
+    "expected_source_file": "vector_stores.md",
+    "answer_present_in_top5": true,
+    "first_hit_rank": 2,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.5762,
+        "filename": "vector_stores.md",
+        "chunk_index": 2,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "## Chroma Chroma is an embedded vector database. A PersistentClient writes to a local directory, so there is no server to run and no network hop on a "
+      },
+      {
+        "rank": 2,
+        "similarity": 0.5564,
+        "filename": "vector_stores.md",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": true,
+        "snippet": "By default Chroma also attaches its own embedding function to a collection and will happily embed raw text with a model of its own choosing. In a syst"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.4267,
+        "filename": "vector_stores.md",
+        "chunk_index": 1,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "## HNSW The index used by Chroma is HNSW, Hierarchical Navigable Small World. It builds a layered graph in which each node links to a bounded number o"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.2757,
+        "filename": "embedding_models.md",
+        "chunk_index": 0,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "# Embedding Models in Retrieval Systems ## What an embedding model does An embedding model maps a span of text to a fixed-length vector of floating po"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.2506,
+        "filename": "embedding_models.md",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "This is precisely why a character budget is unsafe. A 1000-character chunk of plain English prose is roughly 200 tokens and fits. The same 1000 charac"
+      }
+    ]
+  },
+  {
+    "category": "multi_hop",
+    "question": "What similarity floor is recommended, and how many dimensions does the model that produced those scores emit?",
+    "note": "The floor is in retrieval_evaluation.txt; the dimension is in embedding_models.md.",
+    "expected_answer_substring": "384 dimensions",
+    "expected_source_file": "embedding_models.md",
+    "answer_present_in_top5": false,
+    "first_hit_rank": null,
+    "below_floor": false,
+    "results": [
+      {
+        "rank": 1,
+        "similarity": 0.439,
+        "filename": "retrieval_evaluation.txt",
+        "chunk_index": 4,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Setting a similarity floor A floor discards results too weak to be worth sending to the model. It must be set from measurement. Run a set of questions"
+      },
+      {
+        "rank": 2,
+        "similarity": 0.4348,
+        "filename": "embedding_models.md",
+        "chunk_index": 4,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Observed similarity scores are not calibrated probabilities. A score of 0.45 does not mean a 45 percent chance of relevance. The scores are only compa"
+      },
+      {
+        "rank": 3,
+        "similarity": 0.4163,
+        "filename": "retrieval_evaluation.txt",
+        "chunk_index": 3,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "The similarity score as a diagnostic The top-1 similarity score is the cheapest early warning available. When the best passage in the collection score"
+      },
+      {
+        "rank": 4,
+        "similarity": 0.4031,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 5,
+        "page_number": 3,
+        "contains_answer": false,
+        "snippet": "Latency should be reported as percentiles rather than a mean, because the distribution has a long tail dominated by index warm-up. Top-1 similarity is"
+      },
+      {
+        "rank": 5,
+        "similarity": 0.3754,
+        "filename": "rag_notes.pdf",
+        "chunk_index": 1,
+        "page_number": 1,
+        "contains_answer": false,
+        "snippet": "Cosine similarity is the distance metric. Because the vectors are normalised to unit length, cosine distance and one minus cosine similarity are the s"
+      }
+    ]
+  }
+]

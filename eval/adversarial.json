@@ -1,0 +1,72 @@
+[
+  {
+    "category": "vocabulary_mismatch",
+    "question": "How long may a passage be before the machine quietly clips the end off it?",
+    "expected_answer_substring": "truncated at 256 word-piece tokens",
+    "expected_source_file": "embedding_models.md",
+    "note": "Avoids 'truncate', 'token' and '256'. The source sentence uses all three."
+  },
+  {
+    "category": "vocabulary_mismatch",
+    "question": "How wide is the numeric signature this system builds for each piece of writing?",
+    "expected_answer_substring": "384 dimensions",
+    "expected_source_file": "embedding_models.md",
+    "note": "Avoids 'vector', 'dimension' and 'embedding'."
+  },
+  {
+    "category": "vocabulary_mismatch",
+    "question": "What navigational graph arranges the saved signatures so lookups stay quick?",
+    "expected_answer_substring": "Hierarchical Navigable Small World",
+    "expected_source_file": "vector_stores.md",
+    "note": "Avoids 'HNSW', 'index' and 'approximate'."
+  },
+  {
+    "category": "vocabulary_mismatch",
+    "question": "What lower bound stops feeble matches from reaching the language model?",
+    "expected_answer_substring": "floor of 0.25 separates them",
+    "expected_source_file": "retrieval_evaluation.txt",
+    "note": "Avoids 'similarity', 'threshold' and 'floor of 0.25'."
+  },
+  {
+    "category": "boundary_spanning",
+    "question": "How does the default model's vector width compare with all-mpnet-base-v2, and what is the default model's token limit?",
+    "expected_answer_substring": "768-dimensional vectors",
+    "expected_source_file": "embedding_models.md",
+    "note": "The 256-token limit ends chunk 1 and the mpnet comparison opens chunk 2 at the 180/40 configuration."
+  },
+  {
+    "category": "boundary_spanning",
+    "question": "What does Chroma return instead of a similarity, and what does it attach to a collection by default?",
+    "expected_answer_substring": "attaches its own embedding function",
+    "expected_source_file": "vector_stores.md",
+    "note": "The distance/similarity point closes chunk 2; the default embedding function opens chunk 3."
+  },
+  {
+    "category": "boundary_spanning",
+    "question": "What is the trade made by approximate search, and which graph implements it in Chroma?",
+    "expected_answer_substring": "Hierarchical Navigable Small World",
+    "expected_source_file": "vector_stores.md",
+    "note": "The recall/latency trade ends chunk 0; HNSW opens chunk 1."
+  },
+  {
+    "category": "multi_hop",
+    "question": "What vector width does the default model produce, and which graph index stores those vectors?",
+    "expected_answer_substring": "Hierarchical Navigable Small World",
+    "expected_source_file": "vector_stores.md",
+    "note": "384 is in embedding_models.md; HNSW is in vector_stores.md. No chunk holds both."
+  },
+  {
+    "category": "multi_hop",
+    "question": "Why must the same model encode both sides, and what does Chroma do by default that would violate it?",
+    "expected_answer_substring": "vectors from two different models",
+    "expected_source_file": "vector_stores.md",
+    "note": "The matching rule is the last chunk of embedding_models.md; the Chroma default is in vector_stores.md."
+  },
+  {
+    "category": "multi_hop",
+    "question": "What similarity floor is recommended, and how many dimensions does the model that produced those scores emit?",
+    "expected_answer_substring": "384 dimensions",
+    "expected_source_file": "embedding_models.md",
+    "note": "The floor is in retrieval_evaluation.txt; the dimension is in embedding_models.md."
+  }
+]

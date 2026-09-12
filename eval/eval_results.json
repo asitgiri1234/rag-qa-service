@@ -1,0 +1,1582 @@
+{
+  "model": "sentence-transformers/all-MiniLM-L6-v2",
+  "model_max_tokens": 256,
+  "top_k": 5,
+  "corpus": [
+    "embedding_models.md",
+    "rag_notes.pdf",
+    "retrieval_evaluation.txt",
+    "vector_stores.md"
+  ],
+  "question_count": 22,
+  "best_by_recall": {
+    "chunk_size_tokens": 100,
+    "chunk_overlap_tokens": 20
+  },
+  "configurations": [
+    {
+      "chunk_size_tokens": 100,
+      "chunk_overlap_tokens": 20,
+      "chunks_emitted": 40,
+      "mean_chunk_tokens": 75.5,
+      "max_chunk_tokens": 99,
+      "chunks_truncated_by_model": 0,
+      "truncation_rate": 0.0,
+      "recall_at_5": 1.0,
+      "questions_recalled": 22,
+      "questions_total": 22,
+      "top1_file_accuracy": 1.0,
+      "mean_top1_similarity": 0.6809,
+      "mean_retrieval_ms": 24.75,
+      "questions": [
+        {
+          "question": "How many dimensions do the vectors produced by all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.5951,
+          "top5_similarities": [
+            0.5951,
+            0.4439,
+            0.3127,
+            0.2978,
+            0.2839
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 30.87
+        },
+        {
+          "question": "At how many word-piece tokens does all-MiniLM-L6-v2 truncate its input?",
+          "top1_similarity": 0.6679,
+          "top5_similarities": [
+            0.6679,
+            0.5988,
+            0.4457,
+            0.3538,
+            0.3491
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 2,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 26.09
+        },
+        {
+          "question": "How many transformer layers does all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.6571,
+          "top5_similarities": [
+            0.6571,
+            0.2524,
+            0.1833,
+            0.1367,
+            0.1316
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.05
+        },
+        {
+          "question": "What is the difference between a bi-encoder and a cross-encoder?",
+          "top1_similarity": 0.5636,
+          "top5_similarities": [
+            0.5636,
+            0.5378,
+            0.3051,
+            0.23,
+            0.2026
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.11
+        },
+        {
+          "question": "Why are cross-encoders used only as rerankers over the top results?",
+          "top1_similarity": 0.6848,
+          "top5_similarities": [
+            0.6848,
+            0.5033,
+            0.3762,
+            0.3687,
+            0.365
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.28
+        },
+        {
+          "question": "How many word-piece tokens per whitespace word does common English prose average?",
+          "top1_similarity": 0.7698,
+          "top5_similarities": [
+            0.7698,
+            0.4847,
+            0.4162,
+            0.3704,
+            0.3144
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.42
+        },
+        {
+          "question": "What goes wrong if documents and questions are embedded with different models?",
+          "top1_similarity": 0.5286,
+          "top5_similarities": [
+            0.5286,
+            0.4404,
+            0.3876,
+            0.3721,
+            0.3436
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.26
+        },
+        {
+          "question": "How many dimensions does all-mpnet-base-v2 produce and what does it cost?",
+          "top1_similarity": 0.6187,
+          "top5_similarities": [
+            0.6187,
+            0.3721,
+            0.2046,
+            0.1964,
+            0.1886
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.17
+        },
+        {
+          "question": "What index structure does Chroma use for approximate search?",
+          "top1_similarity": 0.7791,
+          "top5_similarities": [
+            0.7791,
+            0.6213,
+            0.5744,
+            0.5694,
+            0.5083
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.32
+        },
+        {
+          "question": "What does the ef_search parameter control?",
+          "top1_similarity": 0.7733,
+          "top5_similarities": [
+            0.7733,
+            0.4416,
+            0.3803,
+            0.3057,
+            0.2987
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.9
+        },
+        {
+          "question": "What is Chroma's default distance metric?",
+          "top1_similarity": 0.748,
+          "top5_similarities": [
+            0.748,
+            0.5181,
+            0.5017,
+            0.4916,
+            0.4613
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.57
+        },
+        {
+          "question": "Why must Chroma's own embedding function be disabled on a collection?",
+          "top1_similarity": 0.8124,
+          "top5_similarities": [
+            0.8124,
+            0.5487,
+            0.4504,
+            0.375,
+            0.3724
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.26
+        },
+        {
+          "question": "What does FAISS lack compared with Chroma?",
+          "top1_similarity": 0.6456,
+          "top5_similarities": [
+            0.6456,
+            0.4615,
+            0.4025,
+            0.4012,
+            0.3999
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.68
+        },
+        {
+          "question": "Beyond how many vectors does brute-force search stop being viable?",
+          "top1_similarity": 0.7713,
+          "top5_similarities": [
+            0.7713,
+            0.6532,
+            0.4573,
+            0.3884,
+            0.3695
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.67
+        },
+        {
+          "question": "Why should metadata filtering happen before the vector search rather than after?",
+          "top1_similarity": 0.7742,
+          "top5_similarities": [
+            0.7742,
+            0.4742,
+            0.4705,
+            0.4619,
+            0.3803
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.89
+        },
+        {
+          "question": "Why should retrieval latency be reported as percentiles rather than a mean?",
+          "top1_similarity": 0.7925,
+          "top5_similarities": [
+            0.7925,
+            0.685,
+            0.6286,
+            0.3993,
+            0.3916
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.04
+        },
+        {
+          "question": "What does recall@k measure?",
+          "top1_similarity": 0.6682,
+          "top5_similarities": [
+            0.6682,
+            0.3546,
+            0.3464,
+            0.3373,
+            0.3369
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.85
+        },
+        {
+          "question": "Above what similarity do answerable questions cluster on this corpus?",
+          "top1_similarity": 0.661,
+          "top5_similarities": [
+            0.661,
+            0.5398,
+            0.4875,
+            0.4637,
+            0.42
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.89
+        },
+        {
+          "question": "When is mean reciprocal rank the wrong metric to report?",
+          "top1_similarity": 0.6489,
+          "top5_similarities": [
+            0.6489,
+            0.6216,
+            0.462,
+            0.3976,
+            0.3896
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.16
+        },
+        {
+          "question": "Why is measuring answer quality a poor first choice for diagnosing a RAG system?",
+          "top1_similarity": 0.5118,
+          "top5_similarities": [
+            0.5118,
+            0.4741,
+            0.4244,
+            0.4023,
+            0.3603
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.3
+        },
+        {
+          "question": "Why does overlap exist between adjacent chunks?",
+          "top1_similarity": 0.6915,
+          "top5_similarities": [
+            0.6915,
+            0.6081,
+            0.4608,
+            0.3333,
+            0.2521
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.96
+        },
+        {
+          "question": "What order does the chunker try boundaries in?",
+          "top1_similarity": 0.6173,
+          "top5_similarities": [
+            0.6173,
+            0.5715,
+            0.4585,
+            0.2915,
+            0.2754
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.76
+        }
+      ]
+    },
+    {
+      "chunk_size_tokens": 180,
+      "chunk_overlap_tokens": 40,
+      "chunks_emitted": 23,
+      "mean_chunk_tokens": 132.0,
+      "max_chunk_tokens": 180,
+      "chunks_truncated_by_model": 0,
+      "truncation_rate": 0.0,
+      "recall_at_5": 1.0,
+      "questions_recalled": 22,
+      "questions_total": 22,
+      "top1_file_accuracy": 0.9545,
+      "mean_top1_similarity": 0.5808,
+      "mean_retrieval_ms": 24.46,
+      "questions": [
+        {
+          "question": "How many dimensions do the vectors produced by all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.3054,
+          "top5_similarities": [
+            0.3054,
+            0.2937,
+            0.2709,
+            0.2651,
+            0.2422
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.09
+        },
+        {
+          "question": "At how many word-piece tokens does all-MiniLM-L6-v2 truncate its input?",
+          "top1_similarity": 0.613,
+          "top5_similarities": [
+            0.613,
+            0.3875,
+            0.3765,
+            0.3744,
+            0.3332
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 2,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.1
+        },
+        {
+          "question": "How many transformer layers does all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.2999,
+          "top5_similarities": [
+            0.2999,
+            0.17,
+            0.1425,
+            0.1057,
+            0.0811
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.34
+        },
+        {
+          "question": "What is the difference between a bi-encoder and a cross-encoder?",
+          "top1_similarity": 0.4849,
+          "top5_similarities": [
+            0.4849,
+            0.4125,
+            0.2895,
+            0.226,
+            0.2241
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.89
+        },
+        {
+          "question": "Why are cross-encoders used only as rerankers over the top results?",
+          "top1_similarity": 0.5795,
+          "top5_similarities": [
+            0.5795,
+            0.4768,
+            0.3773,
+            0.3651,
+            0.3389
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.63
+        },
+        {
+          "question": "How many word-piece tokens per whitespace word does common English prose average?",
+          "top1_similarity": 0.6929,
+          "top5_similarities": [
+            0.6929,
+            0.4278,
+            0.3767,
+            0.3673,
+            0.3643
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.92
+        },
+        {
+          "question": "What goes wrong if documents and questions are embedded with different models?",
+          "top1_similarity": 0.4321,
+          "top5_similarities": [
+            0.4321,
+            0.3619,
+            0.3463,
+            0.2759,
+            0.2673
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 3,
+          "expected_file": "embedding_models.md",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": false,
+          "retrieval_ms": 24.93
+        },
+        {
+          "question": "How many dimensions does all-mpnet-base-v2 produce and what does it cost?",
+          "top1_similarity": 0.4244,
+          "top5_similarities": [
+            0.4244,
+            0.1967,
+            0.1859,
+            0.1854,
+            0.1838
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.39
+        },
+        {
+          "question": "What index structure does Chroma use for approximate search?",
+          "top1_similarity": 0.7645,
+          "top5_similarities": [
+            0.7645,
+            0.6544,
+            0.5441,
+            0.4981,
+            0.4162
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.7
+        },
+        {
+          "question": "What does the ef_search parameter control?",
+          "top1_similarity": 0.5455,
+          "top5_similarities": [
+            0.5455,
+            0.4416,
+            0.3334,
+            0.2771,
+            0.2435
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.17
+        },
+        {
+          "question": "What is Chroma's default distance metric?",
+          "top1_similarity": 0.6841,
+          "top5_similarities": [
+            0.6841,
+            0.4537,
+            0.4486,
+            0.4088,
+            0.3736
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.27
+        },
+        {
+          "question": "Why must Chroma's own embedding function be disabled on a collection?",
+          "top1_similarity": 0.6691,
+          "top5_similarities": [
+            0.6691,
+            0.5359,
+            0.4199,
+            0.3346,
+            0.2397
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.44
+        },
+        {
+          "question": "What does FAISS lack compared with Chroma?",
+          "top1_similarity": 0.6347,
+          "top5_similarities": [
+            0.6347,
+            0.4398,
+            0.4233,
+            0.2164,
+            0.1798
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.65
+        },
+        {
+          "question": "Beyond how many vectors does brute-force search stop being viable?",
+          "top1_similarity": 0.6542,
+          "top5_similarities": [
+            0.6542,
+            0.4573,
+            0.3913,
+            0.3887,
+            0.3678
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.59
+        },
+        {
+          "question": "Why should metadata filtering happen before the vector search rather than after?",
+          "top1_similarity": 0.7742,
+          "top5_similarities": [
+            0.7742,
+            0.4803,
+            0.479,
+            0.4204,
+            0.3986
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.91
+        },
+        {
+          "question": "Why should retrieval latency be reported as percentiles rather than a mean?",
+          "top1_similarity": 0.7925,
+          "top5_similarities": [
+            0.7925,
+            0.6793,
+            0.6344,
+            0.4801,
+            0.4554
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.63
+        },
+        {
+          "question": "What does recall@k measure?",
+          "top1_similarity": 0.484,
+          "top5_similarities": [
+            0.484,
+            0.3537,
+            0.3369,
+            0.3358,
+            0.2884
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.23
+        },
+        {
+          "question": "Above what similarity do answerable questions cluster on this corpus?",
+          "top1_similarity": 0.6063,
+          "top5_similarities": [
+            0.6063,
+            0.5398,
+            0.4728,
+            0.4703,
+            0.4405
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 28.89
+        },
+        {
+          "question": "When is mean reciprocal rank the wrong metric to report?",
+          "top1_similarity": 0.6036,
+          "top5_similarities": [
+            0.6036,
+            0.4151,
+            0.4051,
+            0.3976,
+            0.3896
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.61
+        },
+        {
+          "question": "Why is measuring answer quality a poor first choice for diagnosing a RAG system?",
+          "top1_similarity": 0.4888,
+          "top5_similarities": [
+            0.4888,
+            0.4741,
+            0.4418,
+            0.4023,
+            0.3958
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.91
+        },
+        {
+          "question": "Why does overlap exist between adjacent chunks?",
+          "top1_similarity": 0.6275,
+          "top5_similarities": [
+            0.6275,
+            0.5823,
+            0.2615,
+            0.1928,
+            0.1769
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.85
+        },
+        {
+          "question": "What order does the chunker try boundaries in?",
+          "top1_similarity": 0.617,
+          "top5_similarities": [
+            0.617,
+            0.475,
+            0.2294,
+            0.2202,
+            0.2138
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.91
+        }
+      ]
+    },
+    {
+      "chunk_size_tokens": 300,
+      "chunk_overlap_tokens": 60,
+      "chunks_emitted": 13,
+      "mean_chunk_tokens": 232.5,
+      "max_chunk_tokens": 292,
+      "chunks_truncated_by_model": 5,
+      "truncation_rate": 0.3846,
+      "recall_at_5": 1.0,
+      "questions_recalled": 22,
+      "questions_total": 22,
+      "top1_file_accuracy": 1.0,
+      "mean_top1_similarity": 0.5405,
+      "mean_retrieval_ms": 24.27,
+      "questions": [
+        {
+          "question": "How many dimensions do the vectors produced by all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.3848,
+          "top5_similarities": [
+            0.3848,
+            0.3064,
+            0.1902,
+            0.1691,
+            0.1278
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.05
+        },
+        {
+          "question": "At how many word-piece tokens does all-MiniLM-L6-v2 truncate its input?",
+          "top1_similarity": 0.6907,
+          "top5_similarities": [
+            0.6907,
+            0.3866,
+            0.3447,
+            0.321,
+            0.2232
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.77
+        },
+        {
+          "question": "How many transformer layers does all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.3499,
+          "top5_similarities": [
+            0.3499,
+            0.1141,
+            0.1002,
+            0.0891,
+            0.0844
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.64
+        },
+        {
+          "question": "What is the difference between a bi-encoder and a cross-encoder?",
+          "top1_similarity": 0.5536,
+          "top5_similarities": [
+            0.5536,
+            0.259,
+            0.2397,
+            0.2319,
+            0.204
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.66
+        },
+        {
+          "question": "Why are cross-encoders used only as rerankers over the top results?",
+          "top1_similarity": 0.5777,
+          "top5_similarities": [
+            0.5777,
+            0.3732,
+            0.3687,
+            0.3489,
+            0.3416
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.44
+        },
+        {
+          "question": "How many word-piece tokens per whitespace word does common English prose average?",
+          "top1_similarity": 0.6275,
+          "top5_similarities": [
+            0.6275,
+            0.4385,
+            0.3887,
+            0.3793,
+            0.2698
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.64
+        },
+        {
+          "question": "What goes wrong if documents and questions are embedded with different models?",
+          "top1_similarity": 0.5286,
+          "top5_similarities": [
+            0.5286,
+            0.3337,
+            0.3168,
+            0.2471,
+            0.2352
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.5
+        },
+        {
+          "question": "How many dimensions does all-mpnet-base-v2 produce and what does it cost?",
+          "top1_similarity": 0.3901,
+          "top5_similarities": [
+            0.3901,
+            0.1933,
+            0.1849,
+            0.1347,
+            0.1229
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.94
+        },
+        {
+          "question": "What index structure does Chroma use for approximate search?",
+          "top1_similarity": 0.8211,
+          "top5_similarities": [
+            0.8211,
+            0.6798,
+            0.4718,
+            0.4048,
+            0.3221
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.25
+        },
+        {
+          "question": "What does the ef_search parameter control?",
+          "top1_similarity": 0.367,
+          "top5_similarities": [
+            0.367,
+            0.3233,
+            0.2882,
+            0.2634,
+            0.2314
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.62
+        },
+        {
+          "question": "What is Chroma's default distance metric?",
+          "top1_similarity": 0.6775,
+          "top5_similarities": [
+            0.6775,
+            0.4806,
+            0.3547,
+            0.3038,
+            0.2266
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.25
+        },
+        {
+          "question": "Why must Chroma's own embedding function be disabled on a collection?",
+          "top1_similarity": 0.5667,
+          "top5_similarities": [
+            0.5667,
+            0.3626,
+            0.3306,
+            0.2687,
+            0.2663
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.43
+        },
+        {
+          "question": "What does FAISS lack compared with Chroma?",
+          "top1_similarity": 0.5446,
+          "top5_similarities": [
+            0.5446,
+            0.4078,
+            0.3723,
+            0.2099,
+            0.1772
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.8
+        },
+        {
+          "question": "Beyond how many vectors does brute-force search stop being viable?",
+          "top1_similarity": 0.4782,
+          "top5_similarities": [
+            0.4782,
+            0.4588,
+            0.3883,
+            0.3851,
+            0.3467
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 2,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.79
+        },
+        {
+          "question": "Why should metadata filtering happen before the vector search rather than after?",
+          "top1_similarity": 0.5591,
+          "top5_similarities": [
+            0.5591,
+            0.4111,
+            0.3609,
+            0.3531,
+            0.3135
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.02
+        },
+        {
+          "question": "Why should retrieval latency be reported as percentiles rather than a mean?",
+          "top1_similarity": 0.7125,
+          "top5_similarities": [
+            0.7125,
+            0.4659,
+            0.4643,
+            0.3727,
+            0.352
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.05
+        },
+        {
+          "question": "What does recall@k measure?",
+          "top1_similarity": 0.4759,
+          "top5_similarities": [
+            0.4759,
+            0.3686,
+            0.2812,
+            0.2774,
+            0.2407
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.07
+        },
+        {
+          "question": "Above what similarity do answerable questions cluster on this corpus?",
+          "top1_similarity": 0.4881,
+          "top5_similarities": [
+            0.4881,
+            0.4345,
+            0.4294,
+            0.4269,
+            0.4027
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 4,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 28.21
+        },
+        {
+          "question": "When is mean reciprocal rank the wrong metric to report?",
+          "top1_similarity": 0.4004,
+          "top5_similarities": [
+            0.4004,
+            0.3942,
+            0.3297,
+            0.3112,
+            0.2908
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 2,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.12
+        },
+        {
+          "question": "Why is measuring answer quality a poor first choice for diagnosing a RAG system?",
+          "top1_similarity": 0.4777,
+          "top5_similarities": [
+            0.4777,
+            0.4519,
+            0.4386,
+            0.3299,
+            0.2744
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.55
+        },
+        {
+          "question": "Why does overlap exist between adjacent chunks?",
+          "top1_similarity": 0.6463,
+          "top5_similarities": [
+            0.6463,
+            0.2711,
+            0.2357,
+            0.157,
+            0.137
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.76
+        },
+        {
+          "question": "What order does the chunker try boundaries in?",
+          "top1_similarity": 0.5727,
+          "top5_similarities": [
+            0.5727,
+            0.2274,
+            0.2172,
+            0.1954,
+            0.1728
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.31
+        }
+      ]
+    },
+    {
+      "chunk_size_tokens": 500,
+      "chunk_overlap_tokens": 100,
+      "chunks_emitted": 10,
+      "mean_chunk_tokens": 328.0,
+      "max_chunk_tokens": 458,
+      "chunks_truncated_by_model": 6,
+      "truncation_rate": 0.6,
+      "recall_at_5": 1.0,
+      "questions_recalled": 22,
+      "questions_total": 22,
+      "top1_file_accuracy": 0.8636,
+      "mean_top1_similarity": 0.4875,
+      "mean_retrieval_ms": 24.07,
+      "questions": [
+        {
+          "question": "How many dimensions do the vectors produced by all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.3064,
+          "top5_similarities": [
+            0.3064,
+            0.239,
+            0.2109,
+            0.1296,
+            0.1231
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": false,
+          "retrieval_ms": 28.81
+        },
+        {
+          "question": "At how many word-piece tokens does all-MiniLM-L6-v2 truncate its input?",
+          "top1_similarity": 0.5627,
+          "top5_similarities": [
+            0.5627,
+            0.3866,
+            0.321,
+            0.2232,
+            0.1885
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 4,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.17
+        },
+        {
+          "question": "How many transformer layers does all-MiniLM-L6-v2 have?",
+          "top1_similarity": 0.1009,
+          "top5_similarities": [
+            0.1009,
+            0.1002,
+            0.0891,
+            0.0844,
+            0.0637
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 4,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.02
+        },
+        {
+          "question": "What is the difference between a bi-encoder and a cross-encoder?",
+          "top1_similarity": 0.5536,
+          "top5_similarities": [
+            0.5536,
+            0.259,
+            0.2319,
+            0.227,
+            0.1879
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.63
+        },
+        {
+          "question": "Why are cross-encoders used only as rerankers over the top results?",
+          "top1_similarity": 0.5777,
+          "top5_similarities": [
+            0.5777,
+            0.3732,
+            0.3489,
+            0.3404,
+            0.3392
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.57
+        },
+        {
+          "question": "How many word-piece tokens per whitespace word does common English prose average?",
+          "top1_similarity": 0.64,
+          "top5_similarities": [
+            0.64,
+            0.3887,
+            0.3793,
+            0.2665,
+            0.2367
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.86
+        },
+        {
+          "question": "What goes wrong if documents and questions are embedded with different models?",
+          "top1_similarity": 0.3463,
+          "top5_similarities": [
+            0.3463,
+            0.3168,
+            0.2471,
+            0.2352,
+            0.2266
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.02
+        },
+        {
+          "question": "How many dimensions does all-mpnet-base-v2 produce and what does it cost?",
+          "top1_similarity": 0.345,
+          "top5_similarities": [
+            0.345,
+            0.1933,
+            0.1849,
+            0.1453,
+            0.1347
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "embedding_models.md",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.6
+        },
+        {
+          "question": "What index structure does Chroma use for approximate search?",
+          "top1_similarity": 0.8211,
+          "top5_similarities": [
+            0.8211,
+            0.5533,
+            0.4048,
+            0.335,
+            0.2879
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.56
+        },
+        {
+          "question": "What does the ef_search parameter control?",
+          "top1_similarity": 0.367,
+          "top5_similarities": [
+            0.367,
+            0.2882,
+            0.2314,
+            0.2109,
+            0.2005
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.53
+        },
+        {
+          "question": "What is Chroma's default distance metric?",
+          "top1_similarity": 0.5688,
+          "top5_similarities": [
+            0.5688,
+            0.4806,
+            0.3547,
+            0.2398,
+            0.2122
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.41
+        },
+        {
+          "question": "Why must Chroma's own embedding function be disabled on a collection?",
+          "top1_similarity": 0.5645,
+          "top5_similarities": [
+            0.5645,
+            0.3626,
+            0.2663,
+            0.2385,
+            0.1962
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.52
+        },
+        {
+          "question": "What does FAISS lack compared with Chroma?",
+          "top1_similarity": 0.4138,
+          "top5_similarities": [
+            0.4138,
+            0.4078,
+            0.1772,
+            0.161,
+            0.1515
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 22.8
+        },
+        {
+          "question": "Beyond how many vectors does brute-force search stop being viable?",
+          "top1_similarity": 0.4588,
+          "top5_similarities": [
+            0.4588,
+            0.4171,
+            0.3851,
+            0.3604,
+            0.3467
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.35
+        },
+        {
+          "question": "Why should metadata filtering happen before the vector search rather than after?",
+          "top1_similarity": 0.4111,
+          "top5_similarities": [
+            0.4111,
+            0.3531,
+            0.3323,
+            0.3135,
+            0.3135
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 5,
+          "expected_file": "vector_stores.md",
+          "top1_file": "vector_stores.md",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.31
+        },
+        {
+          "question": "Why should retrieval latency be reported as percentiles rather than a mean?",
+          "top1_similarity": 0.4659,
+          "top5_similarities": [
+            0.4659,
+            0.4643,
+            0.4554,
+            0.3727,
+            0.352
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 2,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": false,
+          "retrieval_ms": 25.29
+        },
+        {
+          "question": "What does recall@k measure?",
+          "top1_similarity": 0.4759,
+          "top5_similarities": [
+            0.4759,
+            0.2812,
+            0.2774,
+            0.267,
+            0.2547
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 23.02
+        },
+        {
+          "question": "Above what similarity do answerable questions cluster on this corpus?",
+          "top1_similarity": 0.6334,
+          "top5_similarities": [
+            0.6334,
+            0.4703,
+            0.4294,
+            0.4027,
+            0.382
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 24.7
+        },
+        {
+          "question": "When is mean reciprocal rank the wrong metric to report?",
+          "top1_similarity": 0.4151,
+          "top5_similarities": [
+            0.4151,
+            0.3942,
+            0.3297,
+            0.2871,
+            0.2505
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 2,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "embedding_models.md",
+          "top1_file_correct": false,
+          "retrieval_ms": 23.55
+        },
+        {
+          "question": "Why is measuring answer quality a poor first choice for diagnosing a RAG system?",
+          "top1_similarity": 0.4777,
+          "top5_similarities": [
+            0.4777,
+            0.4386,
+            0.3958,
+            0.3892,
+            0.272
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "retrieval_evaluation.txt",
+          "top1_file": "retrieval_evaluation.txt",
+          "top1_file_correct": true,
+          "retrieval_ms": 25.05
+        },
+        {
+          "question": "Why does overlap exist between adjacent chunks?",
+          "top1_similarity": 0.6463,
+          "top5_similarities": [
+            0.6463,
+            0.2711,
+            0.2357,
+            0.157,
+            0.1386
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 21.19
+        },
+        {
+          "question": "What order does the chunker try boundaries in?",
+          "top1_similarity": 0.5727,
+          "top5_similarities": [
+            0.5727,
+            0.2172,
+            0.1954,
+            0.1728,
+            0.1711
+          ],
+          "recall_at_5": true,
+          "first_hit_rank": 1,
+          "expected_file": "rag_notes.pdf",
+          "top1_file": "rag_notes.pdf",
+          "top1_file_correct": true,
+          "retrieval_ms": 21.64
+        }
+      ]
+    }
+  ]
+}
