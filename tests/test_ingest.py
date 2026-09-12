@@ -21,6 +21,7 @@ def settings(tmp_path):
         metrics_path=tmp_path / "metrics.jsonl",
         chunk_size_tokens=180,
         chunk_overlap_tokens=40,
+        warm_start=False,
     )
 
 

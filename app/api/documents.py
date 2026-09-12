@@ -13,6 +13,7 @@ from pathlib import Path
 
 from fastapi import APIRouter, File, HTTPException, Query, Request, UploadFile, status
 
+from app.api.limits import READ_LIMIT, UPLOAD_LIMIT, limiter
 from app.config import Settings, get_settings
 from app.core import worker
 from app.models.schemas import (
@@ -51,12 +52,27 @@ def _settings(request: Request) -> Settings:
     return getattr(request.app.state, "settings", None) or get_settings()
 
 
+def _vector_store(request: Request):
+    """The store built at startup from this app's settings.
+
+    Resolved from app state rather than the module-level singleton so an app
+    created with overridden settings deletes from its own collection.
+    """
+    store = getattr(request.app.state, "vector_store", None)
+    if store is None:
+        from app.core.vectorstore import get_vector_store
+
+        return get_vector_store()
+    return store
+
+
 @router.post(
     "",
     response_model=UploadResponse,
     status_code=status.HTTP_202_ACCEPTED,
     summary="Upload a document for asynchronous ingestion",
 )
+@limiter.limit(UPLOAD_LIMIT)
 async def upload_document(request: Request, file: UploadFile = File(...)) -> UploadResponse:
     settings = _settings(request)
     filename = Path(file.filename or "").name
@@ -91,12 +107,15 @@ async def upload_document(request: Request, file: UploadFile = File(...)) -> Upl
     # deep inside the worker, long after the client got its 202.
     if suffix == ".pdf":
         with destination.open("rb") as handle:
-            if handle.read(len(PDF_MAGIC)) != PDF_MAGIC:
-                destination.unlink(missing_ok=True)
-                raise HTTPException(
-                    status.HTTP_400_BAD_REQUEST,
-                    "file does not begin with the PDF magic bytes despite its .pdf extension",
-                )
+            magic = handle.read(len(PDF_MAGIC))
+        # Unlink only after the handle is closed: Windows refuses to remove an
+        # open file, which would turn a clean 400 into a 500.
+        if magic != PDF_MAGIC:
+            destination.unlink(missing_ok=True)
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                "file does not begin with the PDF magic bytes despite its .pdf extension",
+            )
 
     db.insert_document(
         settings.sqlite_path,
@@ -126,7 +145,7 @@ async def _save_upload(file: UploadFile, destination: Path, max_mb: int) -> int:
                     handle.close()
                     destination.unlink(missing_ok=True)
                     raise HTTPException(
-                        status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+                        413,
                         f"file exceeds the {max_mb} MB limit",
                     )
                 handle.write(data)
@@ -139,6 +158,7 @@ async def _save_upload(file: UploadFile, destination: Path, max_mb: int) -> int:
 
 
 @router.get("/{document_id}", response_model=DocumentSummary)
+@limiter.limit(READ_LIMIT)
 def get_document(request: Request, document_id: str) -> DocumentSummary:
     settings = _settings(request)
     document = db.get_document(settings.sqlite_path, document_id)
@@ -148,6 +168,7 @@ def get_document(request: Request, document_id: str) -> DocumentSummary:
 
 
 @router.get("", response_model=DocumentList)
+@limiter.limit(READ_LIMIT)
 def list_documents(
     request: Request,
     limit: int = Query(50, ge=1, le=200),
@@ -164,15 +185,14 @@ def list_documents(
 
 
 @router.delete("/{document_id}", response_model=DeleteResponse)
+@limiter.limit(READ_LIMIT)
 def delete_document(request: Request, document_id: str) -> DeleteResponse:
     settings = _settings(request)
     document = db.get_document(settings.sqlite_path, document_id)
     if document is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, f"no document {document_id}")
 
-    from app.core.vectorstore import get_vector_store
-
-    removed = get_vector_store().delete_document(document_id)
+    removed = _vector_store(request).delete_document(document_id)
     db.delete_document(settings.sqlite_path, document_id)
 
     upload = next(

@@ -36,6 +36,10 @@ class Settings(BaseSettings):
 
     max_upload_mb: int = 20
 
+    #: Load the embedding model during startup instead of on the first job. Off in
+    #: tests, where most cases never embed anything.
+    warm_start: bool = True
+
 
 @lru_cache
 def get_settings() -> Settings:
