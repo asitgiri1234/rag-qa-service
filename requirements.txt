@@ -1,0 +1,19 @@
+# Runtime
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+pydantic-settings>=2.6
+python-multipart>=0.0.12
+
+# Retrieval stack (hand-rolled pipeline -- no LangChain / LlamaIndex)
+chromadb>=0.5.20
+sentence-transformers>=3.3
+tiktoken>=0.8
+pypdf>=5.1
+
+# LLM
+groq>=0.13
+
+# Tests
+pytest>=8.3
+httpx>=0.28

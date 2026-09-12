@@ -1,0 +1,21 @@
+# Local configuration
+.env
+
+# Runtime data: chroma index, sqlite metadata, uploads
+# (directory is kept so a fresh clone has somewhere to write)
+data/*
+!data/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.db
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
