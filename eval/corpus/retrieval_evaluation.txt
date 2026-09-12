@@ -1,0 +1,72 @@
+Evaluating a Retrieval System
+
+Why generation quality is the wrong first thing to measure
+
+When a retrieval augmented system answers badly, the cause is almost always retrieval
+rather than generation. A modern language model asked to answer from three relevant
+passages will do so competently. The same model asked to answer from three irrelevant
+passages will produce something fluent and wrong. Measuring answer quality therefore
+measures retrieval quality with extra noise and expense layered on top. Retrieval
+should be measured directly and first.
+
+Recall at k
+
+Recall@k asks whether the correct passage appears anywhere in the top k results. It
+is the single most useful retrieval metric for this kind of system, because the
+generator sees all k passages and does not care which position the right one occupied.
+Recall@5 of 0.8 means that for eight questions in ten, the answer was somewhere in
+the context handed to the model.
+
+Precision matters far less here than in classical search. Two irrelevant passages
+alongside three relevant ones rarely damage an answer, provided the model has been
+instructed to answer only from what it was given.
+
+Mean reciprocal rank
+
+MRR rewards putting the right passage first. It is the right metric when only the top
+result is shown to a user, and the wrong metric when the top five are all passed to a
+model. Reporting MRR for a system that consumes five passages describes a property
+the system does not depend on.
+
+Latency percentiles
+
+Report latency as percentiles, never as a mean. Retrieval latency distributions have
+a long right tail: a cold index, a page fault, or a garbage collection pause produces
+occasional requests an order of magnitude slower than typical. A mean blends those
+into a number that describes no actual request. The p50 describes the common case,
+the p95 and p99 describe what a user notices and complains about.
+
+The similarity score as a diagnostic
+
+The top-1 similarity score is the cheapest early warning available. When the best
+passage in the collection scores poorly against a question, no amount of prompt
+engineering will rescue the answer, because the necessary information is not in the
+context. Recording that score with every query turns "the answer was wrong" into
+"the answer was wrong and the best available passage scored 0.19", which points at
+the corpus rather than the prompt.
+
+Setting a similarity floor
+
+A floor discards results too weak to be worth sending to the model. It must be set
+from measurement. Run a set of questions known to be answerable by the corpus and a
+set known not to be, record the top-1 similarity of each, and look at where the two
+distributions separate. In practice on this corpus, answerable questions cluster
+above 0.30 and unanswerable ones fall below 0.15, so a floor of 0.25 separates them
+with margin on both sides.
+
+A floor that is too high refuses questions the corpus can actually answer. A floor
+that is too low lets the model improvise over noise. The refusal rate -- the share of
+queries where nothing cleared the floor -- should be tracked, because a sudden rise
+in it usually means the corpus changed rather than the code.
+
+Building a question set
+
+Fifteen to twenty questions written against documents you actually have is worth more
+than a thousand synthetic ones. Write them by reading the corpus and asking what a
+real user would want. Record the expected answer and the page it came from, so recall
+can be computed automatically rather than judged by eye each time.
+
+Deliberately include questions designed to fail. Vocabulary mismatch questions use
+synonyms absent from the source text. Boundary questions target facts that straddle a
+chunk boundary. Multi-hop questions need two facts from distant sections. A question
+set containing only questions the system answers correctly measures nothing.

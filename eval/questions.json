@@ -1,0 +1,134 @@
+[
+  {
+    "question": "How many dimensions do the vectors produced by all-MiniLM-L6-v2 have?",
+    "expected_answer_substring": "384 dimensions",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "At how many word-piece tokens does all-MiniLM-L6-v2 truncate its input?",
+    "expected_answer_substring": "truncated at 256 word-piece tokens",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "How many transformer layers does all-MiniLM-L6-v2 have?",
+    "expected_answer_substring": "six transformer layers",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "What is the difference between a bi-encoder and a cross-encoder?",
+    "expected_answer_substring": "encodes the question and the passage entirely separately",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Why are cross-encoders used only as rerankers over the top results?",
+    "expected_answer_substring": "million forward passes per query",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "How many word-piece tokens per whitespace word does common English prose average?",
+    "expected_answer_substring": "1.3 word-piece tokens per whitespace word",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "What goes wrong if documents and questions are embedded with different models?",
+    "expected_answer_substring": "unrelated coordinate systems",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "How many dimensions does all-mpnet-base-v2 produce and what does it cost?",
+    "expected_answer_substring": "768-dimensional vectors",
+    "expected_source_file": "embedding_models.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "What index structure does Chroma use for approximate search?",
+    "expected_answer_substring": "Hierarchical Navigable Small World",
+    "expected_source_file": "vector_stores.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "What does the ef_search parameter control?",
+    "expected_answer_substring": "how many candidates are examined per query",
+    "expected_source_file": "vector_stores.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "What is Chroma's default distance metric?",
+    "expected_answer_substring": "default distance metric is L2",
+    "expected_source_file": "vector_stores.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Why must Chroma's own embedding function be disabled on a collection?",
+    "expected_answer_substring": "vectors from two different models",
+    "expected_source_file": "vector_stores.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "What does FAISS lack compared with Chroma?",
+    "expected_answer_substring": "stores no metadata",
+    "expected_source_file": "vector_stores.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Beyond how many vectors does brute-force search stop being viable?",
+    "expected_answer_substring": "100,000 vectors",
+    "expected_source_file": "vector_stores.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Why should metadata filtering happen before the vector search rather than after?",
+    "expected_answer_substring": "fewer results than requested",
+    "expected_source_file": "vector_stores.md",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Why should retrieval latency be reported as percentiles rather than a mean?",
+    "expected_answer_substring": "long right tail",
+    "expected_source_file": "retrieval_evaluation.txt",
+    "expected_source_page": 1
+  },
+  {
+    "question": "What does recall@k measure?",
+    "expected_answer_substring": "correct passage appears anywhere in the top k results",
+    "expected_source_file": "retrieval_evaluation.txt",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Above what similarity do answerable questions cluster on this corpus?",
+    "expected_answer_substring": "cluster\nabove 0.30",
+    "expected_source_file": "retrieval_evaluation.txt",
+    "expected_source_page": 1
+  },
+  {
+    "question": "When is mean reciprocal rank the wrong metric to report?",
+    "expected_answer_substring": "wrong metric when the top five are all passed to a\nmodel",
+    "expected_source_file": "retrieval_evaluation.txt",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Why is measuring answer quality a poor first choice for diagnosing a RAG system?",
+    "expected_answer_substring": "measures retrieval quality with extra noise",
+    "expected_source_file": "retrieval_evaluation.txt",
+    "expected_source_page": 1
+  },
+  {
+    "question": "Why does overlap exist between adjacent chunks?",
+    "expected_answer_substring": "straddle a boundary",
+    "expected_source_file": "rag_notes.pdf",
+    "expected_source_page": 2
+  },
+  {
+    "question": "What order does the chunker try boundaries in?",
+    "expected_answer_substring": "paragraph boundaries",
+    "expected_source_file": "rag_notes.pdf",
+    "expected_source_page": 2
+  }
+]

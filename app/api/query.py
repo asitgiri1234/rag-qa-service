@@ -38,6 +38,8 @@ def query(request: Request, payload: QueryRequest) -> QueryResponse:
     top_k = payload.top_k or settings.top_k
     started = time.perf_counter()
 
+    metrics_path = settings.metrics_path
+
     outcome = retrieve(
         payload.question,
         top_k,
@@ -51,7 +53,13 @@ def query(request: Request, payload: QueryRequest) -> QueryResponse:
     if not outcome.results:
         total_ms = (time.perf_counter() - started) * 1000
         _record(
-            payload.question, top_k, outcome, generation_ms=0.0, total_ms=total_ms, answered=False
+            payload.question,
+            top_k,
+            outcome,
+            generation_ms=0.0,
+            total_ms=total_ms,
+            answered=False,
+            path=metrics_path,
         )
         return QueryResponse(
             answer=NO_CONTEXT_ANSWER,
@@ -78,6 +86,7 @@ def query(request: Request, payload: QueryRequest) -> QueryResponse:
         generation_ms=generated.elapsed_ms,
         total_ms=total_ms,
         answered=True,
+        path=metrics_path,
     )
 
     return QueryResponse(
@@ -98,7 +107,7 @@ def query(request: Request, payload: QueryRequest) -> QueryResponse:
     )
 
 
-def _record(question, top_k, outcome, *, generation_ms, total_ms, answered) -> None:
+def _record(question, top_k, outcome, *, generation_ms, total_ms, answered, path=None) -> None:
     """Hand the query to the metrics recorder; never let it break a response."""
     try:
         from app.core import metrics
@@ -112,6 +121,7 @@ def _record(question, top_k, outcome, *, generation_ms, total_ms, answered) -> N
             generation_ms=generation_ms,
             total_ms=total_ms,
             answered=answered,
+            path=path,
         )
     except Exception:
         logger.exception("failed to record query metrics")

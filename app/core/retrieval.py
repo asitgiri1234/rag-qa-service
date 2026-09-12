@@ -26,11 +26,18 @@ class RetrievalOutcome:
     elapsed_ms: float
     candidates: int
     dropped_below_floor: int
-    min_similarity: float
+    #: The configured floor, kept distinct from min_similarity below, which is a
+    #: property of the results rather than of the configuration.
+    similarity_floor: float
 
     @property
     def top_similarity(self) -> float | None:
         return self.results[0].similarity if self.results else None
+
+    @property
+    def min_similarity(self) -> float | None:
+        """Weakest score among the returned chunks."""
+        return min((r.similarity for r in self.results), default=None)
 
     @property
     def mean_similarity(self) -> float | None:
@@ -86,5 +93,5 @@ def retrieve(
         elapsed_ms=elapsed_ms,
         candidates=len(candidates),
         dropped_below_floor=len(candidates) - len(kept),
-        min_similarity=min_similarity,
+        similarity_floor=min_similarity,
     )

@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from slowapi.middleware import SlowAPIMiddleware
 
 from app import __version__
-from app.api import documents, query
+from app.api import documents, metrics, query
 from app.api.errors import register_error_handlers
 from app.api.limits import limiter
 from app.config import Settings, get_settings
@@ -86,6 +86,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     register_error_handlers(application)
     application.include_router(documents.router)
     application.include_router(query.router)
+    application.include_router(metrics.router)
 
     @application.get("/health", response_model=HealthResponse, tags=["meta"])
     def health() -> HealthResponse:

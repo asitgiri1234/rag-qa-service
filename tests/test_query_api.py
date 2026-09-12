@@ -48,11 +48,12 @@ class Outcome:
         self.elapsed_ms = 4.2
         self.candidates = len(results)
         self.dropped_below_floor = 0
-        self.min_similarity = 0.25
+        self.similarity_floor = 0.25
         self.top_similarity = results[0].similarity if results else None
         self.mean_similarity = (
             sum(r.similarity for r in results) / len(results) if results else None
         )
+        self.min_similarity = min((r.similarity for r in results), default=None)
 
 
 @pytest.fixture

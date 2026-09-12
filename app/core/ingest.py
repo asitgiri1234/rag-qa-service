@@ -129,7 +129,7 @@ def ingest_document(
             embed_ms,
             store_ms,
         )
-        _record(metrics)
+        _record(metrics, settings.metrics_path)
         return metrics
 
     except Exception as error:
@@ -143,13 +143,13 @@ def ingest_document(
         raise
 
 
-def _record(metrics: IngestionMetrics) -> None:
+def _record(metrics: IngestionMetrics, path=None) -> None:
     """Hand metrics to the recorder, if one is installed (see Stage 6)."""
     try:
         from app.core import metrics as metrics_module
     except ImportError:
         return
     try:
-        metrics_module.record_ingestion(metrics)
+        metrics_module.record_ingestion(metrics, path)
     except Exception:
         logger.exception("failed to record ingestion metrics for %s", metrics.document_id)
