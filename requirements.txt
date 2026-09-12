@@ -1,24 +1,26 @@
-# Runtime
-fastapi>=0.115
-uvicorn[standard]>=0.32
-pydantic>=2.9
-pydantic-settings>=2.6
-python-multipart>=0.0.12
+# Pinned to the versions this service was built and tested against.
+# Regenerate deliberately, not casually: chromadb and transformers both make
+# breaking changes across majors.
 
-# Retrieval stack (hand-rolled pipeline -- no LangChain / LlamaIndex)
-chromadb>=0.5.20
-sentence-transformers>=3.3
-transformers>=4.46          # tokenizer used directly by app/core/chunking.py
-tiktoken>=0.8
-pypdf>=5.1
+# Web
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.5
+pydantic-settings==2.15.0
+python-multipart==0.0.32
+slowapi==0.1.10
+
+# Retrieval stack -- hand-rolled pipeline, no LangChain / LlamaIndex
+chromadb==1.5.9
+sentence-transformers==6.0.1
+transformers==5.17.0        # tokenizer used directly by app/core/chunking.py
+torch==2.14.0               # CPU build is sufficient; no GPU required
+pypdf==6.18.1
 
 # LLM
-groq>=0.13
-
-# API
-slowapi>=0.1.9
+groq==1.7.0
 
 # Tests
-pytest>=8.3
-httpx>=0.28
-reportlab>=4.2              # generates the PDF test fixture
+pytest==9.1.1
+httpx==0.28.1
+reportlab==5.0.1            # regenerates the PDF test fixture
