@@ -19,7 +19,14 @@ class Settings(BaseSettings):
     groq_api_key: str = ""
 
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
-    llm_model: str = "llama-3.3-70b-versatile"
+    #: Groq decommissioned llama-3.3-70b-versatile; it now returns 404
+    #: model_not_found. Verified against the live models endpoint -- override with
+    #: LLM_MODEL in .env if your account exposes a different set.
+    llm_model: str = "openai/gpt-oss-120b"
+
+    #: Cap on generated answer length, and how long to wait on the Groq API.
+    max_answer_tokens: int = 700
+    groq_timeout_s: float = 30.0
 
     chunk_size_tokens: int = 180
     chunk_overlap_tokens: int = 40
