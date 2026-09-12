@@ -25,8 +25,14 @@ class Settings(BaseSettings):
     chunk_overlap_tokens: int = 40
     top_k: int = 5
 
+    #: Retrieved chunks scoring below this are discarded rather than sent to the LLM
+    #: as context. Set from the observed score distribution -- see EXPLANATIONS.md.
+    min_similarity: float = 0.25
+
+    data_dir: Path = DATA_DIR
     chroma_path: Path = DATA_DIR / "chroma"
     sqlite_path: Path = DATA_DIR / "metadata.db"
+    metrics_path: Path = DATA_DIR / "metrics.jsonl"
 
     max_upload_mb: int = 20
 
