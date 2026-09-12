@@ -1,0 +1,10 @@
+# Text is stored and checked out as LF everywhere, so the repo is identical on
+# Windows and Linux and diffs stay clean.
+* text=auto eol=lf
+
+# Binaries must never be line-ending converted: doing so corrupts them.
+*.pdf binary
+*.db binary
+*.sqlite binary
+*.png binary
+*.jpg binary
