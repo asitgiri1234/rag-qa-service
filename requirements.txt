@@ -8,6 +8,7 @@ python-multipart>=0.0.12
 # Retrieval stack (hand-rolled pipeline -- no LangChain / LlamaIndex)
 chromadb>=0.5.20
 sentence-transformers>=3.3
+transformers>=4.46          # tokenizer used directly by app/core/chunking.py
 tiktoken>=0.8
 pypdf>=5.1
 
