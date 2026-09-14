@@ -10,220 +10,448 @@
   behaviour of its own. Every model-generated or user-supplied string is inserted
   with textContent, never innerHTML.
 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f6f7f9;
-    --panel: #ffffff;
-    --text: #1b1f24;
-    --muted: #5f6b7a;
-    --border: #dde2e8;
-    --accent: #2f6fde;
-    --accent-text: #ffffff;
-    --ok: #1f8a4c;
-    --warn: #b7791f;
-    --bad: #c53030;
-    --soft: #eef2f7;
-    --radius: 10px;
-    --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    --bg: #fafafa;
+    --surface: #ffffff;
+    --surface-2: #f4f4f5;
+    --border: #e4e4e7;
+    --border-strong: #d4d4d8;
+    --text: #18181b;
+    --text-2: #52525b;
+    --text-3: #a1a1aa;
+    --primary: #18181b;
+    --primary-text: #fafafa;
+    --accent: #4263eb;
+    --accent-soft: rgba(66, 99, 235, .10);
+    --ok: #16a34a;
+    --warn: #d97706;
+    --bad: #dc2626;
+    --bad-soft: rgba(220, 38, 38, .08);
+    --shadow: 0 1px 2px rgba(0, 0, 0, .04), 0 4px 16px rgba(0, 0, 0, .04);
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #111418;
-      --panel: #1a1f25;
-      --text: #e6e9ed;
-      --muted: #9aa5b1;
-      --border: #2c333b;
-      --accent: #5b92f0;
-      --accent-text: #0d1117;
-      --ok: #48c07a;
-      --warn: #e0a84a;
-      --bad: #f07171;
-      --soft: #232a32;
+      --bg: #0b0b0c;
+      --surface: #131315;
+      --surface-2: #1c1c1f;
+      --border: #27272a;
+      --border-strong: #3f3f46;
+      --text: #f4f4f5;
+      --text-2: #a1a1aa;
+      --text-3: #71717a;
+      --primary: #f4f4f5;
+      --primary-text: #0b0b0c;
+      --accent: #7b93ff;
+      --accent-soft: rgba(123, 147, 255, .14);
+      --ok: #4ade80;
+      --warn: #fbbf24;
+      --bad: #f87171;
+      --bad-soft: rgba(248, 113, 113, .10);
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 16px rgba(0, 0, 0, .25);
     }
   }
-  * { box-sizing: border-box; }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font: 14px/1.55 var(--sans);
+    -webkit-font-smoothing: antialiased;
   }
-  header, main { max-width: 1100px; margin: 0 auto; padding-inline: 16px; }
-  header {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; flex-wrap: wrap; padding-block: 20px 8px;
-  }
-  h1 { font-size: 1.35rem; margin: 0; }
-  h2 { font-size: 1rem; margin: 0 0 12px; }
-  .subtitle { color: var(--muted); margin: 2px 0 0; font-size: .9rem; }
-  .health { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
-  .dot.up { background: var(--ok); }
-  .dot.down { background: var(--bad); }
-  .header-links a { color: var(--accent); font-size: .85rem; margin-left: 12px; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  button:disabled { cursor: not-allowed; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+  svg { display: block; flex-shrink: 0; }
 
-  main {
-    display: grid; gap: 16px; padding-block: 8px 40px;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-  }
-  @media (max-width: 820px) { main { grid-template-columns: minmax(0, 1fr); } }
-  .col { display: grid; gap: 16px; align-content: start; min-width: 0; }
-  .panel {
-    background: var(--panel); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 16px; min-width: 0;
+  /* --- shell -------------------------------------------------------------- */
+
+  .app {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    height: 100vh;
+    height: 100dvh;
   }
 
-  button {
-    font: inherit; border-radius: 8px; border: 1px solid transparent;
-    padding: 8px 14px; cursor: pointer; background: var(--accent); color: var(--accent-text);
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
   }
-  button:disabled { opacity: .55; cursor: not-allowed; }
-  button.ghost { background: transparent; color: var(--muted); border-color: var(--border); padding: 4px 10px; font-size: .85rem; }
-  button.ghost:hover:not(:disabled) { color: var(--bad); border-color: var(--bad); }
-
-  .drop {
-    /* A <label> is inline by default; its border would wrap each line fragment. */
-    display: block;
-    border: 2px dashed var(--border); border-radius: var(--radius);
-    padding: 22px 12px; text-align: center; color: var(--muted); cursor: pointer;
-    transition: border-color .15s, background .15s;
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    padding: 18px 20px 14px;
   }
-  .drop.over { border-color: var(--accent); background: var(--soft); }
-  .drop strong { color: var(--text); }
-  .drop input { display: none; }
-  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
-  .chosen { font-size: .9rem; color: var(--muted); overflow-wrap: anywhere; flex: 1; }
+  .logo {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: grid; place-items: center;
+    background: var(--primary); color: var(--primary-text);
+  }
+  .brand-name { font-weight: 600; letter-spacing: -.01em; }
 
-  .msg { font-size: .88rem; margin-top: 10px; overflow-wrap: anywhere; }
-  .msg.error { color: var(--bad); }
-  .msg.info { color: var(--muted); }
+  .dropzone {
+    display: flex; align-items: center; gap: 12px;
+    margin: 4px 16px 18px;
+    padding: 14px;
+    border: 1px dashed var(--border-strong);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .15s, background-color .15s;
+  }
+  .dropzone:hover, .dropzone.over { border-color: var(--accent); background: var(--accent-soft); }
+  .dropzone.busy { pointer-events: none; opacity: .7; }
+  .dropzone input { display: none; }
+  .dropzone-icon {
+    width: 34px; height: 34px; border-radius: 8px;
+    display: grid; place-items: center;
+    background: var(--surface-2); color: var(--text-2);
+  }
+  .dropzone-title { font-weight: 500; }
+  .dropzone-sub { font-size: 12px; color: var(--text-3); }
 
-  .docs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .section-head {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 20px 8px;
+    font-size: 12px; font-weight: 500; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .section-head .spacer { flex: 1; }
+  .icon-btn {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: grid; place-items: center; color: var(--text-3);
+    transition: background-color .15s, color .15s;
+  }
+  .icon-btn:hover:not(:disabled) { background: var(--surface-2); color: var(--text); }
+
+  .docs {
+    list-style: none; margin: 0; padding: 0 10px 12px;
+    flex: 1; min-height: 0; overflow-y: auto;
+  }
   .doc {
-    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px;
-    align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 8px;
+    display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto;
+    align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px;
+    cursor: pointer; user-select: none;
+    transition: background-color .12s;
   }
-  .doc input[type=checkbox] { width: 16px; height: 16px; }
-  .doc .name { font-weight: 600; overflow-wrap: anywhere; }
-  .doc .meta { font-size: .8rem; color: var(--muted); }
-  .doc .err { font-size: .8rem; color: var(--bad); overflow-wrap: anywhere; }
-  .badge {
-    display: inline-block; font-size: .72rem; font-weight: 600; letter-spacing: .02em;
-    padding: 1px 8px; border-radius: 999px; margin-left: 6px; vertical-align: 1px;
-    background: var(--soft); color: var(--muted);
-  }
-  .badge.completed { color: var(--ok); }
-  .badge.failed { color: var(--bad); }
-  .badge.pending, .badge.processing { color: var(--warn); }
-  .empty { color: var(--muted); font-size: .9rem; }
-  .hint { color: var(--muted); font-size: .82rem; margin: 10px 0 0; }
+  .doc:hover { background: var(--surface-2); }
+  .doc.inactive { cursor: default; }
+  .doc.selected { background: var(--accent-soft); }
 
-  textarea, input[type=number] {
-    font: inherit; color: var(--text); background: var(--bg);
-    border: 1px solid var(--border); border-radius: 8px; padding: 10px;
+  .check {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid var(--border-strong);
+    display: grid; place-items: center; color: transparent;
+    transition: background-color .12s, border-color .12s;
   }
-  textarea { width: 100%; min-height: 84px; resize: vertical; }
-  input[type=number] { width: 70px; padding: 6px 8px; }
-  label.inline { font-size: .88rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-  .spacer { flex: 1; }
+  .doc.selected .check { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .doc.inactive .check { opacity: .35; }
 
-  .answer {
-    white-space: pre-wrap; overflow-wrap: anywhere; padding: 14px;
-    border-radius: 8px; background: var(--soft); margin-top: 14px;
+  .filetype {
+    font: 500 10px/1 var(--mono); letter-spacing: .02em;
+    padding: 4px 5px; border-radius: 4px;
+    background: var(--surface-2); color: var(--text-2);
+    border: 1px solid var(--border);
+    min-width: 34px; text-align: center;
   }
-  .answer.refused { border-left: 4px solid var(--warn); }
-  .timings { display: flex; gap: 14px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); margin-top: 8px; }
-  .timings b { color: var(--text); font-weight: 600; font-family: var(--mono); }
+  .doc-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .doc-sub {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 12px; color: var(--text-3);
+    white-space: nowrap; overflow: hidden;
+  }
+  .doc-sub span:last-child { overflow: hidden; text-overflow: ellipsis; }
+  .doc-sub.failed { color: var(--bad); }
+  .pulse {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--warn);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: .3; } }
 
-  .sources { display: grid; gap: 10px; margin-top: 16px; }
-  .source { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
-  .source-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: .85rem; }
-  .source-head .file { font-weight: 600; overflow-wrap: anywhere; }
-  .source-head .where { color: var(--muted); }
-  .score { margin-left: auto; display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: .82rem; }
-  .bar { width: 80px; height: 6px; background: var(--soft); border-radius: 999px; overflow: hidden; }
-  .bar span { display: block; height: 100%; background: var(--accent); }
+  .delete {
+    height: 26px; min-width: 26px; padding: 0 6px; border-radius: 6px;
+    display: grid; place-items: center;
+    color: var(--text-3); opacity: 0;
+    font-size: 12px; font-weight: 500;
+    transition: opacity .12s, background-color .12s, color .12s;
+  }
+  .doc:hover .delete, .delete:focus-visible, .delete.armed { opacity: 1; }
+  .delete:hover:not(:disabled) { color: var(--bad); background: var(--bad-soft); }
+  .delete.armed { color: var(--bad); background: var(--bad-soft); }
+  .delete:disabled { visibility: hidden; }
+  @media (hover: none) { .delete { opacity: 1; } }
+
+  .docs-empty { padding: 4px 20px; color: var(--text-3); font-size: 13px; }
+
+  .sidebar-foot {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--text-3);
+  }
+  .sidebar-foot a { color: var(--text-2); text-decoration: none; }
+  .sidebar-foot a:hover { color: var(--text); }
+  .health { display: flex; align-items: center; gap: 6px; margin-right: auto; }
+  .health-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text-3); }
+  .health-dot.up { background: var(--ok); }
+  .health-dot.down { background: var(--bad); }
+
+  /* --- conversation ------------------------------------------------------- */
+
+  .chat { display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+  .thread { flex: 1; min-height: 0; overflow-y: auto; }
+  .column { max-width: 780px; margin: 0 auto; padding: 32px 24px; }
+
+  .empty-state { padding-top: 14vh; text-align: center; }
+  .empty-state h1 { font-size: 26px; font-weight: 600; letter-spacing: -.02em; margin: 0 0 8px; }
+  .empty-state p { color: var(--text-2); margin: 0 auto; max-width: 420px; }
+
+  .turn { margin-bottom: 36px; }
+  .question {
+    margin-left: auto; width: fit-content; max-width: 85%;
+    padding: 10px 14px; border-radius: 14px 14px 4px 14px;
+    background: var(--surface-2);
+    white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .answer { margin-top: 18px; }
+  .answer-text { font-size: 15px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .cite {
+    display: inline-grid; place-items: center;
+    min-width: 18px; height: 18px; padding: 0 4px; margin: 0 1px;
+    border-radius: 5px; vertical-align: 2px;
+    font: 500 11px/1 var(--mono);
+    background: var(--accent-soft); color: var(--accent);
+    transition: background-color .12s, color .12s;
+  }
+  .cite:hover, .cite:focus-visible { background: var(--accent); color: #fff; }
+
+  .notice {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface);
+  }
+  .notice svg { color: var(--warn); margin-top: 2px; }
+  .notice.error svg { color: var(--bad); }
+  .notice-sub { color: var(--text-3); font-size: 13px; margin-top: 2px; }
+
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 12px;
+    font: 12px/1.4 var(--mono); color: var(--text-3);
+  }
+  .meta b { font-weight: 500; color: var(--text-2); }
+
+  .sources-head {
+    margin: 22px 0 10px;
+    font-size: 12px; font-weight: 500; color: var(--text-3);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .sources { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+  .source {
+    cursor: pointer; min-width: 0;
+    padding: 12px; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .source:hover { border-color: var(--border-strong); }
+  .source.hl { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  .source-top { display: flex; align-items: center; gap: 8px; }
+  .source-idx {
+    font: 500 11px/18px var(--mono); min-width: 18px; text-align: center;
+    border-radius: 5px; background: var(--accent-soft); color: var(--accent);
+  }
+  .source-file { font-weight: 500; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .source-loc { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .score { display: flex; align-items: center; gap: 8px; margin-top: 8px; font: 12px var(--mono); color: var(--text-2); }
+  .score-track { flex: 1; height: 4px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 99px; background: var(--accent); }
   .snippet {
-    font-size: .85rem; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere;
-    margin-top: 6px; max-height: 7.5em; overflow: hidden;
+    margin-top: 8px; font-size: 12.5px; line-height: 1.55; color: var(--text-2);
+    overflow-wrap: anywhere;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
   }
-  .spinner {
-    width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent);
-    border-radius: 50%; display: inline-block; animation: spin .8s linear infinite; vertical-align: -2px;
+  /* Paragraph breaks are collapsed in the preview and restored when expanded. */
+  .source.open .snippet { -webkit-line-clamp: unset; display: block; white-space: pre-wrap; }
+
+  .skeleton { display: grid; gap: 10px; }
+  .skeleton span {
+    height: 12px; border-radius: 6px;
+    background: linear-gradient(90deg, var(--surface-2) 25%, var(--border) 50%, var(--surface-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.3s linear infinite;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .skeleton span:nth-child(2) { width: 92%; }
+  .skeleton span:nth-child(3) { width: 64%; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+
+  /* --- composer ----------------------------------------------------------- */
+
+  .composer { padding: 0 24px 22px; background: var(--bg); }
+  .composer-inner { max-width: 780px; margin: 0 auto; }
+  .composer-box {
+    border: 1px solid var(--border); border-radius: 14px;
+    background: var(--surface); box-shadow: var(--shadow);
+    transition: border-color .15s;
+  }
+  .composer-box:focus-within { border-color: var(--border-strong); }
+  .composer textarea {
+    display: block; width: 100%; resize: none; border: 0; outline: 0;
+    background: transparent; color: var(--text);
+    font: 15px/1.5 var(--sans);
+    padding: 14px 16px 6px; max-height: 180px;
+  }
+  .composer textarea::placeholder { color: var(--text-3); }
+  .composer-bar { display: flex; align-items: center; gap: 8px; padding: 6px 8px 8px 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 10px; border-radius: 99px;
+    font-size: 12px; color: var(--text-2);
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .chip.active { color: var(--accent); border-color: transparent; background: var(--accent-soft); }
+  .chip select {
+    border: 0; outline: 0; background: transparent; color: var(--text);
+    font: 500 12px var(--mono); cursor: pointer; padding: 0;
+  }
+  .chip select option { background: var(--surface); }
+  .composer-bar .spacer { flex: 1; }
+  .send {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: grid; place-items: center;
+    background: var(--primary); color: var(--primary-text);
+    transition: opacity .15s;
+  }
+  .send:disabled { opacity: .3; }
+  .composer-hint { text-align: center; font-size: 11.5px; color: var(--text-3); margin-top: 8px; }
+
+  /* --- toasts ------------------------------------------------------------- */
+
+  .toasts {
+    position: fixed; right: 16px; bottom: 16px; z-index: 10;
+    display: grid; gap: 8px; max-width: min(360px, calc(100vw - 32px));
+  }
+  .toast {
+    padding: 10px 14px; border-radius: 10px; font-size: 13px;
+    background: var(--primary); color: var(--primary-text);
+    box-shadow: var(--shadow); overflow-wrap: anywhere;
+    animation: rise .18s ease-out;
+  }
+  .toast.error { background: var(--bad); color: #fff; }
+  @keyframes rise { from { transform: translateY(6px); opacity: 0; } }
+
+  /* --- narrow screens ----------------------------------------------------- */
+
+  @media (max-width: 860px) {
+    .app { display: block; height: auto; }
+    .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
+    .brand { padding: 16px 16px 12px; }
+    .dropzone { margin: 4px 16px 14px; }
+    .section-head { padding: 0 16px 6px; }
+    .docs { max-height: 240px; padding: 0 6px 10px; }
+    .sidebar-foot { padding: 10px 16px; }
+    .chat { min-height: 70vh; }
+    .thread { overflow: visible; }
+    .column { padding: 24px 16px; }
+    .empty-state { padding-top: 6vh; }
+    .composer { position: sticky; bottom: 0; padding: 8px 16px 14px; }
+    .question { max-width: 92%; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <div>
-    <h1>RAG QA Service</h1>
-    <p class="subtitle">Upload documents, then ask questions answered only from them.</p>
-  </div>
-  <div class="health">
-    <span class="dot" id="health-dot"></span><span id="health-text">checking…</span>
-    <span class="header-links"><a href="/docs" target="_blank" rel="noopener">API docs</a><a href="/metrics/summary" target="_blank" rel="noopener">Metrics</a></span>
-  </div>
-</header>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo" data-icon="logo"></div>
+      <span class="brand-name">RAG QA</span>
+    </div>
 
-<main>
-  <div class="col">
-    <section class="panel">
-      <h2>1. Upload a document</h2>
-      <label class="drop" id="drop">
-        <input type="file" id="file" accept=".pdf,.txt,.md">
-        <strong>Choose a file</strong> or drag it here<br>
-        <span style="font-size:.82rem">PDF, TXT or Markdown</span>
-      </label>
-      <div class="row">
-        <span class="chosen" id="chosen">No file selected</span>
-        <button id="upload-btn" disabled>Upload</button>
-      </div>
-      <div class="msg" id="upload-msg" hidden></div>
-    </section>
+    <label class="dropzone" id="drop">
+      <input type="file" id="file" accept=".pdf,.txt,.md">
+      <span class="dropzone-icon" data-icon="upload"></span>
+      <span>
+        <span class="dropzone-title" id="drop-title">Upload a document</span><br>
+        <span class="dropzone-sub">PDF, TXT or Markdown</span>
+      </span>
+    </label>
 
-    <section class="panel">
-      <div class="row" style="margin:0 0 12px">
-        <h2 style="margin:0">2. Documents</h2>
-        <span class="spacer"></span>
-        <button class="ghost" id="refresh-btn">Refresh</button>
-      </div>
-      <ul class="docs" id="docs"></ul>
-      <p class="empty" id="docs-empty" hidden>No documents yet. Upload one to get started.</p>
-      <p class="hint">Tick documents to restrict answers to them. With none ticked, every completed document is searched.</p>
-      <div class="msg error" id="docs-msg" hidden></div>
-    </section>
-  </div>
+    <div class="section-head">
+      <span>Library</span>
+      <span id="doc-count"></span>
+      <span class="spacer"></span>
+      <button class="icon-btn" id="refresh-btn" title="Refresh" aria-label="Refresh documents" data-icon="refresh"></button>
+    </div>
+    <ul class="docs" id="docs"></ul>
+    <p class="docs-empty" id="docs-empty" hidden>Nothing indexed yet.</p>
 
-  <div class="col">
-    <section class="panel">
-      <h2>3. Ask a question</h2>
-      <textarea id="question" maxlength="1000" placeholder="e.g. What index structure does Chroma use?"></textarea>
-      <div class="row">
-        <label class="inline">Top k <input type="number" id="top-k" min="1" max="20" value="5"></label>
-        <span class="chosen" id="scope"></span>
-        <button id="ask-btn">Ask</button>
+    <div class="sidebar-foot">
+      <span class="health"><span class="health-dot" id="health-dot"></span><span id="health-text">Connecting</span></span>
+      <a href="/docs" target="_blank" rel="noopener">API</a>
+      <a href="/metrics/summary" target="_blank" rel="noopener">Metrics</a>
+    </div>
+  </aside>
+
+  <main class="chat">
+    <div class="thread" id="thread-scroll">
+      <div class="column" id="thread">
+        <div class="empty-state" id="empty-state">
+          <h1>Ask your documents</h1>
+          <p>Answers are drawn only from what you have uploaded, and every one shows the passages it came from.</p>
+        </div>
       </div>
-      <div class="msg" id="ask-msg" hidden></div>
-      <div id="result" hidden>
-        <div class="answer" id="answer"></div>
-        <div class="timings" id="timings"></div>
-        <div class="sources" id="sources"></div>
+    </div>
+
+    <form class="composer" id="composer">
+      <div class="composer-inner">
+        <div class="composer-box">
+          <textarea id="question" rows="1" maxlength="1000" placeholder="Ask a question…"></textarea>
+          <div class="composer-bar">
+            <button type="button" class="chip" id="scope" title="Tick documents in the library to narrow the search"></button>
+            <label class="chip" title="Passages retrieved per question">top-k
+              <select id="top-k"></select>
+            </label>
+            <span class="spacer"></span>
+            <button type="submit" class="send" id="send" aria-label="Send" data-icon="send" disabled></button>
+          </div>
+        </div>
+        <div class="composer-hint">Enter to send · Shift + Enter for a new line</div>
       </div>
-    </section>
-  </div>
-</main>
+    </form>
+  </main>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
 
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
-  const POLL_MS = 3000;          // GET /documents is limited to 30/minute
+  const POLL_MS = 3000;               // GET /documents is limited to 30/minute
   const RATE_LIMIT_BACKOFF_MS = 15000;
+  const DEFAULT_TOP_K = 5;
   const TYPES = { ".pdf": "application/pdf", ".txt": "text/plain", ".md": "text/markdown" };
 
-  let selectedFile = null;
-  let pollTimer = null;
-  const selectedIds = new Set();
+  // Static markup only -- never user or model content.
+  const ICONS = {
+    logo: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16M4 12h10M4 19h7"/><circle cx="18" cy="17" r="3"/></svg>',
+    upload: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4m0 0L7.5 8.5M12 4l4.5 4.5M5 15v3a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-3"/></svg>',
+    refresh: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/></svg>',
+    send: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>',
+    check: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg>',
+    trash: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6m4-6v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>',
+    info: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v4h1"/></svg>',
+    close: '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  };
+
+  const state = { documents: [], selected: new Set(), pollTimer: null, asking: false };
 
   // --- helpers ---------------------------------------------------------------
 
@@ -232,16 +460,19 @@
     for (const [key, value] of Object.entries(props)) {
       if (key === "text") node.textContent = value;
       else if (key === "class") node.className = value;
+      else if (key === "icon") node.innerHTML = ICONS[value];
       else node.setAttribute(key, value);
     }
     for (const child of children) node.append(child);
     return node;
   }
 
-  function show(node, text, kind) {
-    node.textContent = text;
-    node.className = "msg " + kind;
-    node.hidden = false;
+  document.querySelectorAll("[data-icon]").forEach((node) => { node.innerHTML = ICONS[node.dataset.icon]; });
+
+  function toast(message, kind = "") {
+    const node = el("div", { class: `toast ${kind}`, text: message });
+    $("toasts").append(node);
+    setTimeout(() => node.remove(), 4500);
   }
 
   /** Fetch JSON, turning the API's {"error": {...}} envelope into a thrown Error. */
@@ -257,49 +488,61 @@
     return body;
   }
 
-  function extensionOf(name) {
+  const extensionOf = (name) => {
     const dot = name.lastIndexOf(".");
     return dot === -1 ? "" : name.slice(dot).toLowerCase();
-  }
-
-  function formatTime(iso) {
-    if (!iso) return "";
-    const date = new Date(iso);
-    return isNaN(date) ? iso : date.toLocaleString();
-  }
+  };
+  const formatBytes = (bytes) => bytes < 1024 * 1024
+    ? `${(bytes / 1024).toFixed(1)} KB`
+    : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  const formatMs = (ms) => ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(2)} s`;
 
   // --- health ----------------------------------------------------------------
 
   async function checkHealth() {
     try {
       const health = await api("/health");
-      $("health-dot").className = "dot up";
-      $("health-text").textContent = `API online · v${health.version}`;
+      $("health-dot").className = "health-dot up";
+      $("health-text").textContent = `Online · v${health.version}`;
     } catch {
-      $("health-dot").className = "dot down";
-      $("health-text").textContent = "API unreachable";
+      $("health-dot").className = "health-dot down";
+      $("health-text").textContent = "Offline";
     }
   }
 
   // --- upload ----------------------------------------------------------------
 
-  function chooseFile(file) {
-    const msg = $("upload-msg");
-    msg.hidden = true;
+  async function upload(file) {
     if (!file) return;
-    if (!TYPES[extensionOf(file.name)]) {
-      selectedFile = null;
-      $("chosen").textContent = "No file selected";
-      $("upload-btn").disabled = true;
-      show(msg, `Unsupported file type: ${file.name}. Use .pdf, .txt or .md.`, "error");
+    const extension = extensionOf(file.name);
+    if (!TYPES[extension]) {
+      toast(`${file.name} isn't supported. Use a PDF, TXT or Markdown file.`, "error");
       return;
     }
-    selectedFile = file;
-    $("chosen").textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-    $("upload-btn").disabled = false;
+
+    const drop = $("drop");
+    drop.classList.add("busy");
+    $("drop-title").textContent = `Uploading ${file.name}…`;
+
+    // Browsers report markdown inconsistently (often an empty type), so declare
+    // the content type from the extension the server validates against.
+    const form = new FormData();
+    form.append("file", new File([file], file.name, { type: TYPES[extension] }));
+
+    try {
+      await api("/documents", { method: "POST", body: form });
+      toast(`${file.name} uploaded. Indexing now.`);
+      await loadDocuments();
+    } catch (error) {
+      toast(`Upload failed: ${error.message}`, "error");
+    } finally {
+      drop.classList.remove("busy");
+      $("drop-title").textContent = "Upload a document";
+      $("file").value = "";
+    }
   }
 
-  $("file").addEventListener("change", (event) => chooseFile(event.target.files[0]));
+  $("file").addEventListener("change", (event) => upload(event.target.files[0]));
 
   const drop = $("drop");
   ["dragenter", "dragover"].forEach((type) => drop.addEventListener(type, (event) => {
@@ -310,135 +553,198 @@
     event.preventDefault();
     drop.classList.remove("over");
   }));
-  drop.addEventListener("drop", (event) => chooseFile(event.dataTransfer.files[0]));
+  drop.addEventListener("drop", (event) => upload(event.dataTransfer.files[0]));
 
-  $("upload-btn").addEventListener("click", async () => {
-    if (!selectedFile) return;
-    const button = $("upload-btn");
-    const msg = $("upload-msg");
-    button.disabled = true;
-    show(msg, `Uploading ${selectedFile.name}…`, "info");
-
-    // Browsers report markdown inconsistently (often an empty type), so declare
-    // the content type from the extension the server will validate against.
-    const typed = new File([selectedFile], selectedFile.name, {
-      type: TYPES[extensionOf(selectedFile.name)],
-    });
-    const form = new FormData();
-    form.append("file", typed);
-
-    try {
-      const result = await api("/documents", { method: "POST", body: form });
-      show(msg, `Accepted. Processing in the background (id ${result.document_id}).`, "info");
-      selectedFile = null;
-      $("file").value = "";
-      $("chosen").textContent = "No file selected";
-      await loadDocuments();
-    } catch (error) {
-      show(msg, `Upload failed: ${error.message}`, "error");
-      button.disabled = false;
-    }
-  });
-
-  // --- documents -------------------------------------------------------------
+  // --- library ---------------------------------------------------------------
 
   async function loadDocuments() {
-    clearTimeout(pollTimer);
-    const msg = $("docs-msg");
+    clearTimeout(state.pollTimer);
     let nextPoll = null;
     try {
       const data = await api("/documents?limit=200");
-      msg.hidden = true;
-      renderDocuments(data.documents);
-      const busy = data.documents.some((d) => d.status === "pending" || d.status === "processing");
-      if (busy) nextPoll = POLL_MS;
+      state.documents = data.documents;
+      renderDocuments();
+      if (data.documents.some((d) => d.status === "pending" || d.status === "processing")) {
+        nextPoll = POLL_MS;
+      }
     } catch (error) {
-      show(msg, `Could not load documents: ${error.message}`, "error");
       if (error.status === 429) nextPoll = RATE_LIMIT_BACKOFF_MS;
+      else toast(`Couldn't load documents: ${error.message}`, "error");
     }
-    if (nextPoll) pollTimer = setTimeout(loadDocuments, nextPoll);
+    if (nextPoll) state.pollTimer = setTimeout(loadDocuments, nextPoll);
   }
 
-  function renderDocuments(documents) {
+  function renderDocuments() {
+    const documents = state.documents;
     const list = $("docs");
     list.replaceChildren();
     $("docs-empty").hidden = documents.length > 0;
+    $("doc-count").textContent = documents.length ? `· ${documents.length}` : "";
 
-    // Forget selections for documents that no longer exist or are not searchable.
-    const completed = new Set(documents.filter((d) => d.status === "completed").map((d) => d.document_id));
-    for (const id of [...selectedIds]) if (!completed.has(id)) selectedIds.delete(id);
+    // Drop selections for documents that are gone or not searchable.
+    const searchable = new Set(documents.filter((d) => d.status === "completed").map((d) => d.document_id));
+    for (const id of [...state.selected]) if (!searchable.has(id)) state.selected.delete(id);
 
-    for (const doc of documents) {
-      const checkbox = el("input", { type: "checkbox", title: "Restrict answers to this document" });
-      checkbox.checked = selectedIds.has(doc.document_id);
-      checkbox.disabled = doc.status !== "completed";
-      checkbox.addEventListener("change", () => {
-        checkbox.checked ? selectedIds.add(doc.document_id) : selectedIds.delete(doc.document_id);
-        renderScope();
-      });
-
-      const busy = doc.status === "pending" || doc.status === "processing";
-      const badge = el("span", { class: `badge ${doc.status}` }, busy
-        ? [el("span", { class: "spinner", style: "width:9px;height:9px;border-width:2px;margin-right:4px" }), doc.status]
-        : [doc.status]);
-
-      const details = [
-        el("div", { class: "name" }, [doc.filename, badge]),
-        el("div", {
-          class: "meta",
-          text: `${doc.chunk_count} chunks · ${(doc.size_bytes / 1024).toFixed(1)} KB · ${formatTime(doc.created_at)}`,
-        }),
-      ];
-      if (doc.error) details.push(el("div", { class: "err", text: doc.error }));
-
-      const remove = el("button", { class: "ghost", text: "Delete" });
-      remove.disabled = busy;
-      remove.addEventListener("click", () => deleteDocument(doc, remove));
-
-      list.append(el("li", { class: "doc" }, [checkbox, el("div", {}, details), remove]));
-    }
+    // Re-rendering replaces the rows, so carry keyboard focus across by id.
+    const focusedId = document.activeElement?.closest?.(".doc")?.dataset.id;
+    for (const doc of documents) list.append(renderDocument(doc, searchable.has(doc.document_id)));
+    if (focusedId) list.querySelector(`[data-id="${CSS.escape(focusedId)}"]`)?.focus();
     renderScope();
   }
 
+  function renderDocument(doc, searchable) {
+    const busy = doc.status === "pending" || doc.status === "processing";
+    const selected = state.selected.has(doc.document_id);
+
+    let sub;
+    if (busy) {
+      sub = el("div", { class: "doc-sub" }, [
+        el("span", { class: "pulse" }),
+        el("span", { text: doc.status === "pending" ? "Queued" : "Indexing…" }),
+      ]);
+    } else if (doc.status === "failed") {
+      sub = el("div", { class: "doc-sub failed", title: doc.error || "" }, [
+        el("span", { text: doc.error ? `Failed · ${doc.error}` : "Failed" }),
+      ]);
+    } else {
+      sub = el("div", { class: "doc-sub" }, [
+        el("span", { text: `${doc.chunk_count} chunks · ${formatBytes(doc.size_bytes)}` }),
+      ]);
+    }
+
+    const remove = el("button", {
+      class: "delete", icon: "trash", title: "Delete", "aria-label": `Delete ${doc.filename}`,
+    });
+    remove.disabled = busy;
+    remove.addEventListener("click", (event) => {
+      event.stopPropagation();
+      deleteDocument(doc, remove);
+    });
+
+    const item = el("li", {
+      class: `doc${selected ? " selected" : ""}${searchable ? "" : " inactive"}`,
+      title: searchable ? "Select to search only this document" : doc.filename,
+      "data-id": doc.document_id,
+    }, [
+      el("span", { class: "check", icon: "check" }),
+      el("span", { class: "filetype", text: extensionOf(doc.filename).slice(1).toUpperCase() || "FILE" }),
+      el("div", { style: "min-width:0" }, [el("div", { class: "doc-name", text: doc.filename }), sub]),
+      remove,
+    ]);
+
+    if (searchable) {
+      item.tabIndex = 0;
+      item.setAttribute("role", "checkbox");
+      item.setAttribute("aria-checked", String(selected));
+      const toggle = () => {
+        state.selected.has(doc.document_id)
+          ? state.selected.delete(doc.document_id)
+          : state.selected.add(doc.document_id);
+        renderDocuments();
+      };
+      item.addEventListener("click", toggle);
+      item.addEventListener("keydown", (event) => {
+        if (event.target === item && (event.key === " " || event.key === "Enter")) {
+          event.preventDefault();
+          toggle();
+        }
+      });
+    }
+    return item;
+  }
+
+  /** Two-step delete: the first click arms the button, the second confirms. */
   async function deleteDocument(doc, button) {
-    if (!confirm(`Delete "${doc.filename}" and its indexed chunks?`)) return;
+    if (!button.classList.contains("armed")) {
+      button.classList.add("armed");
+      button.textContent = "Delete?";
+      setTimeout(() => {
+        if (!button.isConnected) return;
+        button.classList.remove("armed");
+        button.innerHTML = ICONS.trash;
+      }, 3000);
+      return;
+    }
     button.disabled = true;
     try {
       await api(`/documents/${encodeURIComponent(doc.document_id)}`, { method: "DELETE" });
-      selectedIds.delete(doc.document_id);
+      state.selected.delete(doc.document_id);
+      toast(`Deleted ${doc.filename}`);
       await loadDocuments();
     } catch (error) {
-      show($("docs-msg"), `Delete failed: ${error.message}`, "error");
+      toast(`Delete failed: ${error.message}`, "error");
       button.disabled = false;
     }
   }
 
   function renderScope() {
-    $("scope").textContent = selectedIds.size
-      ? `Searching ${selectedIds.size} selected document${selectedIds.size === 1 ? "" : "s"}`
-      : "Searching all documents";
+    const scope = $("scope");
+    const count = state.selected.size;
+    scope.replaceChildren();
+    scope.classList.toggle("active", count > 0);
+    if (count) {
+      scope.append(`${count} document${count === 1 ? "" : "s"}`, el("span", { icon: "close" }));
+      scope.title = "Clear selection and search every document";
+    } else {
+      scope.append("All documents");
+      scope.title = "Tick documents in the library to narrow the search";
+    }
   }
 
+  $("scope").addEventListener("click", () => {
+    if (!state.selected.size) return;
+    state.selected.clear();
+    renderDocuments();
+  });
   $("refresh-btn").addEventListener("click", loadDocuments);
 
-  // --- query -----------------------------------------------------------------
+  // --- questions -------------------------------------------------------------
 
-  async function ask() {
-    const question = $("question").value.trim();
-    const msg = $("ask-msg");
-    if (!question) {
-      show(msg, "Type a question first.", "error");
-      return;
+  const topK = $("top-k");
+  for (let k = 1; k <= 20; k++) topK.append(el("option", { value: String(k), text: String(k) }));
+  topK.value = String(DEFAULT_TOP_K);
+
+  const question = $("question");
+  function syncComposer() {
+    question.style.height = "auto";
+    question.style.height = `${Math.min(question.scrollHeight, 180)}px`;
+    $("send").disabled = state.asking || !question.value.trim();
+  }
+  question.addEventListener("input", syncComposer);
+  question.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+      event.preventDefault();
+      $("composer").requestSubmit();
     }
-    const topK = Math.min(20, Math.max(1, parseInt($("top-k").value, 10) || 5));
-    const payload = { question, top_k: topK };
-    if (selectedIds.size) payload.document_ids = [...selectedIds];
+  });
 
-    const button = $("ask-btn");
-    button.disabled = true;
-    msg.replaceChildren(el("span", { class: "spinner" }), " Retrieving and generating…");
-    msg.className = "msg info";
-    msg.hidden = false;
+  function scrollToEnd() {
+    const scroller = $("thread-scroll");
+    if (scroller.scrollHeight > scroller.clientHeight) {
+      scroller.scrollTo({ top: scroller.scrollHeight, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+  }
+
+  $("composer").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const text = question.value.trim();
+    if (!text || state.asking) return;
+
+    const payload = { question: text, top_k: Number(topK.value) };
+    if (state.selected.size) payload.document_ids = [...state.selected];
+
+    $("empty-state").hidden = true;
+    const answer = el("div", { class: "answer" }, [
+      el("div", { class: "skeleton" }, [el("span"), el("span"), el("span")]),
+    ]);
+    $("thread").append(el("div", { class: "turn" }, [el("div", { class: "question", text }), answer]));
+
+    question.value = "";
+    state.asking = true;
+    syncComposer();
+    scrollToEnd();
 
     try {
       const result = await api("/query", {
@@ -446,57 +752,116 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      msg.hidden = true;
-      renderAnswer(result);
+      renderAnswer(answer, result, payload);
     } catch (error) {
-      show(msg, `Query failed: ${error.message}`, "error");
-    } finally {
-      button.disabled = false;
-    }
-  }
-
-  function renderAnswer(result) {
-    const refused = result.sources.length === 0;
-    const answer = $("answer");
-    answer.textContent = result.answer;
-    answer.className = "answer" + (refused ? " refused" : "");
-
-    const timing = (label, ms) => el("span", {}, [`${label} `, el("b", { text: `${Number(ms).toFixed(0)} ms` })]);
-    $("timings").replaceChildren(
-      timing("retrieval", result.retrieval_ms),
-      timing("generation", result.generation_ms),
-      timing("total", result.total_ms),
-      ...(refused ? [el("span", { text: "No chunk cleared the similarity floor, so the LLM was not called." })] : []),
-    );
-
-    const sources = $("sources");
-    sources.replaceChildren();
-    result.sources.forEach((source, position) => {
-      const pct = Math.max(0, Math.min(1, source.similarity_score)) * 100;
-      sources.append(el("div", { class: "source" }, [
-        el("div", { class: "source-head" }, [
-          el("span", { class: "file", text: `[${position + 1}] ${source.filename}` }),
-          el("span", { class: "where", text: `page ${source.page_number} · chunk ${source.chunk_index}` }),
-          el("span", { class: "score", title: "Cosine similarity (1 - distance)" }, [
-            el("span", { class: "bar" }, [el("span", { style: `width:${pct.toFixed(1)}%` })]),
-            source.similarity_score.toFixed(4),
-          ]),
+      answer.replaceChildren(el("div", { class: "notice error" }, [
+        el("span", { icon: "info" }),
+        el("div", {}, [
+          el("div", { text: "The question couldn't be answered." }),
+          el("div", { class: "notice-sub", text: error.message }),
         ]),
-        el("div", { class: "snippet", text: source.text }),
       ]));
-    });
+    } finally {
+      state.asking = false;
+      syncComposer();
+      scrollToEnd();
+    }
+  });
 
-    $("result").hidden = false;
+  function renderAnswer(container, result, payload) {
+    const children = [];
+    const scopeLabel = payload.document_ids
+      ? `${payload.document_ids.length} document${payload.document_ids.length === 1 ? "" : "s"}`
+      : "all documents";
+
+    if (result.sources.length === 0) {
+      children.push(el("div", { class: "notice" }, [
+        el("span", { icon: "info" }),
+        el("div", {}, [
+          el("div", { text: result.answer }),
+          el("div", {
+            class: "notice-sub",
+            text: "No passage scored above the similarity floor, so the language model wasn't called.",
+          }),
+        ]),
+      ]));
+    } else {
+      const cards = result.sources.map((source, index) => renderSource(source, index));
+      children.push(el("div", { class: "answer-text" }, withCitations(result.answer, cards)));
+      children.push(el("div", { class: "sources-head", text: `Sources · ${result.sources.length}` }));
+      children.push(el("div", { class: "sources" }, cards));
+    }
+
+    const stat = (label, value) => el("span", {}, [`${label} `, el("b", { text: value })]);
+    children.push(el("div", { class: "meta" }, [
+      stat("retrieval", formatMs(result.retrieval_ms)),
+      stat("generation", formatMs(result.generation_ms)),
+      stat("total", formatMs(result.total_ms)),
+      stat("top-k", String(payload.top_k)),
+      stat("scope", scopeLabel),
+    ]));
+
+    container.replaceChildren(...children);
   }
 
-  $("ask-btn").addEventListener("click", ask);
-  $("question").addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) ask();
-  });
+  /**
+   * Split the answer on citation markers and link each one to its source card.
+   * Accepts [1] as well as the 【1†L1-L7】 form some models emit.
+   */
+  function withCitations(text, cards) {
+    const nodes = [];
+    const pattern = /[\[【](\d{1,2})(?:†[^\]】]*)?[\]】]/g;
+    let last = 0;
+    for (const match of text.matchAll(pattern)) {
+      const card = cards[Number(match[1]) - 1];
+      if (!card) continue;
+      if (match.index > last) nodes.push(text.slice(last, match.index));
+      const cite = el("button", { class: "cite", type: "button", text: match[1], title: "Show source" });
+      const on = () => card.classList.add("hl");
+      const off = () => card.classList.remove("hl");
+      cite.addEventListener("mouseenter", on);
+      cite.addEventListener("mouseleave", off);
+      cite.addEventListener("focus", on);
+      cite.addEventListener("blur", off);
+      cite.addEventListener("click", () => card.scrollIntoView({ behavior: "smooth", block: "nearest" }));
+      nodes.push(cite);
+      last = match.index + match[0].length;
+    }
+    if (last < text.length) nodes.push(text.slice(last));
+    return nodes;
+  }
+
+  function renderSource(source, index) {
+    const score = Math.max(0, Math.min(1, source.similarity_score));
+    const card = el("div", { class: "source", role: "button", tabindex: "0", title: "Expand passage" }, [
+      el("div", { class: "source-top" }, [
+        el("span", { class: "source-idx", text: String(index + 1) }),
+        el("span", { class: "source-file", text: source.filename }),
+      ]),
+      el("div", { class: "source-loc", text: `Page ${source.page_number} · chunk ${source.chunk_index}` }),
+      el("div", { class: "score", title: "Cosine similarity" }, [
+        el("div", { class: "score-track" }, [el("div", { class: "score-fill", style: `width:${(score * 100).toFixed(1)}%` })]),
+        el("span", { text: source.similarity_score.toFixed(3) }),
+      ]),
+      el("div", { class: "snippet", text: source.text }),
+    ]);
+    const toggle = () => card.classList.toggle("open");
+    card.addEventListener("click", toggle);
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggle();
+      }
+    });
+    return card;
+  }
 
   // --- start -----------------------------------------------------------------
 
+  renderScope();
+  syncComposer();
   checkHealth();
+  setInterval(checkHealth, 30000);
   loadDocuments();
 })();
 </script>
