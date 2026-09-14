@@ -82,6 +82,8 @@
   button.ghost:hover:not(:disabled) { color: var(--bad); border-color: var(--bad); }
 
   .drop {
+    /* A <label> is inline by default; its border would wrap each line fragment. */
+    display: block;
     border: 2px dashed var(--border); border-radius: var(--radius);
     padding: 22px 12px; text-align: center; color: var(--muted); cursor: pointer;
     transition: border-color .15s, background .15s;
