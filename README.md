@@ -104,11 +104,22 @@ uvicorn app.main:app --reload
 First start downloads the embedding model (~90 MB) into the HuggingFace cache.
 Interactive docs at <http://127.0.0.1:8000/docs>.
 
+### Demo UI
+
+Open <http://127.0.0.1:8000/> for a small browser client: upload documents, watch
+their status move from `pending` to `completed`, optionally tick documents to restrict
+the search, then ask questions and see the answer with each source's page, chunk and
+similarity score, plus retrieval and generation timings.
+
+It is a thin client, not part of the system under evaluation: one static file,
+[`app/static/index.html`](app/static/index.html), plain HTML/CSS/JS with no build step
+and no dependencies, calling only the public endpoints documented below.
+
 ### Test
 
 ```bash
-pytest                 # full suite (108 tests)
-pytest -m "not slow"   # 97 tests; skips those that load the embedding model
+pytest                 # full suite (109 tests)
+pytest -m "not slow"   # 98 tests; skips those that load the embedding model
 ```
 
 `-m "not slow"` still downloads the tokenizer (~500 KB) on first run, since chunking

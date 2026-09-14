@@ -58,6 +58,7 @@ app/
                 retrieval, generation, ingest, worker, metrics
   models/       Pydantic schemas
   storage/      db.py -- SQLite job state, stdlib sqlite3, no ORM
+  static/       index.html -- demo UI served at /, plain JS, calls only the public API
 tests/
 scripts/        ingest_local, eval_chunking, find_failures, make_fixtures
 eval/           corpus, question sets, committed results

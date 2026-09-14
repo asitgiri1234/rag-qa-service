@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG QA Service</title>
+<!--
+  Thin demo client for the API. Plain HTML/CSS/JS, no build step and no
+  dependencies: it calls the same endpoints documented in the README and adds no
+  behaviour of its own. Every model-generated or user-supplied string is inserted
+  with textContent, never innerHTML.
+-->
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --text: #1b1f24;
+    --muted: #5f6b7a;
+    --border: #dde2e8;
+    --accent: #2f6fde;
+    --accent-text: #ffffff;
+    --ok: #1f8a4c;
+    --warn: #b7791f;
+    --bad: #c53030;
+    --soft: #eef2f7;
+    --radius: 10px;
+    --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #111418;
+      --panel: #1a1f25;
+      --text: #e6e9ed;
+      --muted: #9aa5b1;
+      --border: #2c333b;
+      --accent: #5b92f0;
+      --accent-text: #0d1117;
+      --ok: #48c07a;
+      --warn: #e0a84a;
+      --bad: #f07171;
+      --soft: #232a32;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header, main { max-width: 1100px; margin: 0 auto; padding-inline: 16px; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; flex-wrap: wrap; padding-block: 20px 8px;
+  }
+  h1 { font-size: 1.35rem; margin: 0; }
+  h2 { font-size: 1rem; margin: 0 0 12px; }
+  .subtitle { color: var(--muted); margin: 2px 0 0; font-size: .9rem; }
+  .health { font-size: .85rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--muted); }
+  .dot.up { background: var(--ok); }
+  .dot.down { background: var(--bad); }
+  .header-links a { color: var(--accent); font-size: .85rem; margin-left: 12px; }
+
+  main {
+    display: grid; gap: 16px; padding-block: 8px 40px;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+  @media (max-width: 820px) { main { grid-template-columns: minmax(0, 1fr); } }
+  .col { display: grid; gap: 16px; align-content: start; min-width: 0; }
+  .panel {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; min-width: 0;
+  }
+
+  button {
+    font: inherit; border-radius: 8px; border: 1px solid transparent;
+    padding: 8px 14px; cursor: pointer; background: var(--accent); color: var(--accent-text);
+  }
+  button:disabled { opacity: .55; cursor: not-allowed; }
+  button.ghost { background: transparent; color: var(--muted); border-color: var(--border); padding: 4px 10px; font-size: .85rem; }
+  button.ghost:hover:not(:disabled) { color: var(--bad); border-color: var(--bad); }
+
+  .drop {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 22px 12px; text-align: center; color: var(--muted); cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .drop.over { border-color: var(--accent); background: var(--soft); }
+  .drop strong { color: var(--text); }
+  .drop input { display: none; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 10px; }
+  .chosen { font-size: .9rem; color: var(--muted); overflow-wrap: anywhere; flex: 1; }
+
+  .msg { font-size: .88rem; margin-top: 10px; overflow-wrap: anywhere; }
+  .msg.error { color: var(--bad); }
+  .msg.info { color: var(--muted); }
+
+  .docs { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .doc {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 10px;
+    align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 8px;
+  }
+  .doc input[type=checkbox] { width: 16px; height: 16px; }
+  .doc .name { font-weight: 600; overflow-wrap: anywhere; }
+  .doc .meta { font-size: .8rem; color: var(--muted); }
+  .doc .err { font-size: .8rem; color: var(--bad); overflow-wrap: anywhere; }
+  .badge {
+    display: inline-block; font-size: .72rem; font-weight: 600; letter-spacing: .02em;
+    padding: 1px 8px; border-radius: 999px; margin-left: 6px; vertical-align: 1px;
+    background: var(--soft); color: var(--muted);
+  }
+  .badge.completed { color: var(--ok); }
+  .badge.failed { color: var(--bad); }
+  .badge.pending, .badge.processing { color: var(--warn); }
+  .empty { color: var(--muted); font-size: .9rem; }
+  .hint { color: var(--muted); font-size: .82rem; margin: 10px 0 0; }
+
+  textarea, input[type=number] {
+    font: inherit; color: var(--text); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px; padding: 10px;
+  }
+  textarea { width: 100%; min-height: 84px; resize: vertical; }
+  input[type=number] { width: 70px; padding: 6px 8px; }
+  label.inline { font-size: .88rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .spacer { flex: 1; }
+
+  .answer {
+    white-space: pre-wrap; overflow-wrap: anywhere; padding: 14px;
+    border-radius: 8px; background: var(--soft); margin-top: 14px;
+  }
+  .answer.refused { border-left: 4px solid var(--warn); }
+  .timings { display: flex; gap: 14px; flex-wrap: wrap; font-size: .82rem; color: var(--muted); margin-top: 8px; }
+  .timings b { color: var(--text); font-weight: 600; font-family: var(--mono); }
+
+  .sources { display: grid; gap: 10px; margin-top: 16px; }
+  .source { border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; }
+  .source-head { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: .85rem; }
+  .source-head .file { font-weight: 600; overflow-wrap: anywhere; }
+  .source-head .where { color: var(--muted); }
+  .score { margin-left: auto; display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: .82rem; }
+  .bar { width: 80px; height: 6px; background: var(--soft); border-radius: 999px; overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--accent); }
+  .snippet {
+    font-size: .85rem; color: var(--muted); white-space: pre-wrap; overflow-wrap: anywhere;
+    margin-top: 6px; max-height: 7.5em; overflow: hidden;
+  }
+  .spinner {
+    width: 14px; height: 14px; border: 2px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; display: inline-block; animation: spin .8s linear infinite; vertical-align: -2px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>RAG QA Service</h1>
+    <p class="subtitle">Upload documents, then ask questions answered only from them.</p>
+  </div>
+  <div class="health">
+    <span class="dot" id="health-dot"></span><span id="health-text">checking…</span>
+    <span class="header-links"><a href="/docs" target="_blank" rel="noopener">API docs</a><a href="/metrics/summary" target="_blank" rel="noopener">Metrics</a></span>
+  </div>
+</header>
+
+<main>
+  <div class="col">
+    <section class="panel">
+      <h2>1. Upload a document</h2>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept=".pdf,.txt,.md">
+        <strong>Choose a file</strong> or drag it here<br>
+        <span style="font-size:.82rem">PDF, TXT or Markdown</span>
+      </label>
+      <div class="row">
+        <span class="chosen" id="chosen">No file selected</span>
+        <button id="upload-btn" disabled>Upload</button>
+      </div>
+      <div class="msg" id="upload-msg" hidden></div>
+    </section>
+
+    <section class="panel">
+      <div class="row" style="margin:0 0 12px">
+        <h2 style="margin:0">2. Documents</h2>
+        <span class="spacer"></span>
+        <button class="ghost" id="refresh-btn">Refresh</button>
+      </div>
+      <ul class="docs" id="docs"></ul>
+      <p class="empty" id="docs-empty" hidden>No documents yet. Upload one to get started.</p>
+      <p class="hint">Tick documents to restrict answers to them. With none ticked, every completed document is searched.</p>
+      <div class="msg error" id="docs-msg" hidden></div>
+    </section>
+  </div>
+
+  <div class="col">
+    <section class="panel">
+      <h2>3. Ask a question</h2>
+      <textarea id="question" maxlength="1000" placeholder="e.g. What index structure does Chroma use?"></textarea>
+      <div class="row">
+        <label class="inline">Top k <input type="number" id="top-k" min="1" max="20" value="5"></label>
+        <span class="chosen" id="scope"></span>
+        <button id="ask-btn">Ask</button>
+      </div>
+      <div class="msg" id="ask-msg" hidden></div>
+      <div id="result" hidden>
+        <div class="answer" id="answer"></div>
+        <div class="timings" id="timings"></div>
+        <div class="sources" id="sources"></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const POLL_MS = 3000;          // GET /documents is limited to 30/minute
+  const RATE_LIMIT_BACKOFF_MS = 15000;
+  const TYPES = { ".pdf": "application/pdf", ".txt": "text/plain", ".md": "text/markdown" };
+
+  let selectedFile = null;
+  let pollTimer = null;
+  const selectedIds = new Set();
+
+  // --- helpers ---------------------------------------------------------------
+
+  function el(tag, props = {}, children = []) {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(props)) {
+      if (key === "text") node.textContent = value;
+      else if (key === "class") node.className = value;
+      else node.setAttribute(key, value);
+    }
+    for (const child of children) node.append(child);
+    return node;
+  }
+
+  function show(node, text, kind) {
+    node.textContent = text;
+    node.className = "msg " + kind;
+    node.hidden = false;
+  }
+
+  /** Fetch JSON, turning the API's {"error": {...}} envelope into a thrown Error. */
+  async function api(path, options = {}) {
+    const response = await fetch(path, options);
+    let body = null;
+    try { body = await response.json(); } catch { /* non-JSON body */ }
+    if (!response.ok) {
+      const error = new Error(body?.error?.message || `HTTP ${response.status}`);
+      error.status = response.status;
+      throw error;
+    }
+    return body;
+  }
+
+  function extensionOf(name) {
+    const dot = name.lastIndexOf(".");
+    return dot === -1 ? "" : name.slice(dot).toLowerCase();
+  }
+
+  function formatTime(iso) {
+    if (!iso) return "";
+    const date = new Date(iso);
+    return isNaN(date) ? iso : date.toLocaleString();
+  }
+
+  // --- health ----------------------------------------------------------------
+
+  async function checkHealth() {
+    try {
+      const health = await api("/health");
+      $("health-dot").className = "dot up";
+      $("health-text").textContent = `API online · v${health.version}`;
+    } catch {
+      $("health-dot").className = "dot down";
+      $("health-text").textContent = "API unreachable";
+    }
+  }
+
+  // --- upload ----------------------------------------------------------------
+
+  function chooseFile(file) {
+    const msg = $("upload-msg");
+    msg.hidden = true;
+    if (!file) return;
+    if (!TYPES[extensionOf(file.name)]) {
+      selectedFile = null;
+      $("chosen").textContent = "No file selected";
+      $("upload-btn").disabled = true;
+      show(msg, `Unsupported file type: ${file.name}. Use .pdf, .txt or .md.`, "error");
+      return;
+    }
+    selectedFile = file;
+    $("chosen").textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+    $("upload-btn").disabled = false;
+  }
+
+  $("file").addEventListener("change", (event) => chooseFile(event.target.files[0]));
+
+  const drop = $("drop");
+  ["dragenter", "dragover"].forEach((type) => drop.addEventListener(type, (event) => {
+    event.preventDefault();
+    drop.classList.add("over");
+  }));
+  ["dragleave", "drop"].forEach((type) => drop.addEventListener(type, (event) => {
+    event.preventDefault();
+    drop.classList.remove("over");
+  }));
+  drop.addEventListener("drop", (event) => chooseFile(event.dataTransfer.files[0]));
+
+  $("upload-btn").addEventListener("click", async () => {
+    if (!selectedFile) return;
+    const button = $("upload-btn");
+    const msg = $("upload-msg");
+    button.disabled = true;
+    show(msg, `Uploading ${selectedFile.name}…`, "info");
+
+    // Browsers report markdown inconsistently (often an empty type), so declare
+    // the content type from the extension the server will validate against.
+    const typed = new File([selectedFile], selectedFile.name, {
+      type: TYPES[extensionOf(selectedFile.name)],
+    });
+    const form = new FormData();
+    form.append("file", typed);
+
+    try {
+      const result = await api("/documents", { method: "POST", body: form });
+      show(msg, `Accepted. Processing in the background (id ${result.document_id}).`, "info");
+      selectedFile = null;
+      $("file").value = "";
+      $("chosen").textContent = "No file selected";
+      await loadDocuments();
+    } catch (error) {
+      show(msg, `Upload failed: ${error.message}`, "error");
+      button.disabled = false;
+    }
+  });
+
+  // --- documents -------------------------------------------------------------
+
+  async function loadDocuments() {
+    clearTimeout(pollTimer);
+    const msg = $("docs-msg");
+    let nextPoll = null;
+    try {
+      const data = await api("/documents?limit=200");
+      msg.hidden = true;
+      renderDocuments(data.documents);
+      const busy = data.documents.some((d) => d.status === "pending" || d.status === "processing");
+      if (busy) nextPoll = POLL_MS;
+    } catch (error) {
+      show(msg, `Could not load documents: ${error.message}`, "error");
+      if (error.status === 429) nextPoll = RATE_LIMIT_BACKOFF_MS;
+    }
+    if (nextPoll) pollTimer = setTimeout(loadDocuments, nextPoll);
+  }
+
+  function renderDocuments(documents) {
+    const list = $("docs");
+    list.replaceChildren();
+    $("docs-empty").hidden = documents.length > 0;
+
+    // Forget selections for documents that no longer exist or are not searchable.
+    const completed = new Set(documents.filter((d) => d.status === "completed").map((d) => d.document_id));
+    for (const id of [...selectedIds]) if (!completed.has(id)) selectedIds.delete(id);
+
+    for (const doc of documents) {
+      const checkbox = el("input", { type: "checkbox", title: "Restrict answers to this document" });
+      checkbox.checked = selectedIds.has(doc.document_id);
+      checkbox.disabled = doc.status !== "completed";
+      checkbox.addEventListener("change", () => {
+        checkbox.checked ? selectedIds.add(doc.document_id) : selectedIds.delete(doc.document_id);
+        renderScope();
+      });
+
+      const busy = doc.status === "pending" || doc.status === "processing";
+      const badge = el("span", { class: `badge ${doc.status}` }, busy
+        ? [el("span", { class: "spinner", style: "width:9px;height:9px;border-width:2px;margin-right:4px" }), doc.status]
+        : [doc.status]);
+
+      const details = [
+        el("div", { class: "name" }, [doc.filename, badge]),
+        el("div", {
+          class: "meta",
+          text: `${doc.chunk_count} chunks · ${(doc.size_bytes / 1024).toFixed(1)} KB · ${formatTime(doc.created_at)}`,
+        }),
+      ];
+      if (doc.error) details.push(el("div", { class: "err", text: doc.error }));
+
+      const remove = el("button", { class: "ghost", text: "Delete" });
+      remove.disabled = busy;
+      remove.addEventListener("click", () => deleteDocument(doc, remove));
+
+      list.append(el("li", { class: "doc" }, [checkbox, el("div", {}, details), remove]));
+    }
+    renderScope();
+  }
+
+  async function deleteDocument(doc, button) {
+    if (!confirm(`Delete "${doc.filename}" and its indexed chunks?`)) return;
+    button.disabled = true;
+    try {
+      await api(`/documents/${encodeURIComponent(doc.document_id)}`, { method: "DELETE" });
+      selectedIds.delete(doc.document_id);
+      await loadDocuments();
+    } catch (error) {
+      show($("docs-msg"), `Delete failed: ${error.message}`, "error");
+      button.disabled = false;
+    }
+  }
+
+  function renderScope() {
+    $("scope").textContent = selectedIds.size
+      ? `Searching ${selectedIds.size} selected document${selectedIds.size === 1 ? "" : "s"}`
+      : "Searching all documents";
+  }
+
+  $("refresh-btn").addEventListener("click", loadDocuments);
+
+  // --- query -----------------------------------------------------------------
+
+  async function ask() {
+    const question = $("question").value.trim();
+    const msg = $("ask-msg");
+    if (!question) {
+      show(msg, "Type a question first.", "error");
+      return;
+    }
+    const topK = Math.min(20, Math.max(1, parseInt($("top-k").value, 10) || 5));
+    const payload = { question, top_k: topK };
+    if (selectedIds.size) payload.document_ids = [...selectedIds];
+
+    const button = $("ask-btn");
+    button.disabled = true;
+    msg.replaceChildren(el("span", { class: "spinner" }), " Retrieving and generating…");
+    msg.className = "msg info";
+    msg.hidden = false;
+
+    try {
+      const result = await api("/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      msg.hidden = true;
+      renderAnswer(result);
+    } catch (error) {
+      show(msg, `Query failed: ${error.message}`, "error");
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  function renderAnswer(result) {
+    const refused = result.sources.length === 0;
+    const answer = $("answer");
+    answer.textContent = result.answer;
+    answer.className = "answer" + (refused ? " refused" : "");
+
+    const timing = (label, ms) => el("span", {}, [`${label} `, el("b", { text: `${Number(ms).toFixed(0)} ms` })]);
+    $("timings").replaceChildren(
+      timing("retrieval", result.retrieval_ms),
+      timing("generation", result.generation_ms),
+      timing("total", result.total_ms),
+      ...(refused ? [el("span", { text: "No chunk cleared the similarity floor, so the LLM was not called." })] : []),
+    );
+
+    const sources = $("sources");
+    sources.replaceChildren();
+    result.sources.forEach((source, position) => {
+      const pct = Math.max(0, Math.min(1, source.similarity_score)) * 100;
+      sources.append(el("div", { class: "source" }, [
+        el("div", { class: "source-head" }, [
+          el("span", { class: "file", text: `[${position + 1}] ${source.filename}` }),
+          el("span", { class: "where", text: `page ${source.page_number} · chunk ${source.chunk_index}` }),
+          el("span", { class: "score", title: "Cosine similarity (1 - distance)" }, [
+            el("span", { class: "bar" }, [el("span", { style: `width:${pct.toFixed(1)}%` })]),
+            source.similarity_score.toFixed(4),
+          ]),
+        ]),
+        el("div", { class: "snippet", text: source.text }),
+      ]));
+    });
+
+    $("result").hidden = false;
+  }
+
+  $("ask-btn").addEventListener("click", ask);
+  $("question").addEventListener("keydown", (event) => {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) ask();
+  });
+
+  // --- start -----------------------------------------------------------------
+
+  checkHealth();
+  loadDocuments();
+})();
+</script>
+</body>
+</html>

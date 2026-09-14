@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from slowapi.middleware import SlowAPIMiddleware
 
 from app import __version__
@@ -18,6 +20,9 @@ from app.models.health import HealthResponse
 from app.storage import db
 
 logger = logging.getLogger(__name__)
+
+#: Single-file demo client. It only calls the public API, so it adds no behaviour.
+FRONTEND_PATH = Path(__file__).resolve().parent / "static" / "index.html"
 
 
 def configure_logging(level: int = logging.INFO) -> None:
@@ -91,6 +96,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @application.get("/health", response_model=HealthResponse, tags=["meta"])
     def health() -> HealthResponse:
         return HealthResponse(status="ok", version=__version__)
+
+    @application.get("/", include_in_schema=False)
+    def frontend() -> FileResponse:
+        return FileResponse(FRONTEND_PATH, media_type="text/html")
 
     return application
 
