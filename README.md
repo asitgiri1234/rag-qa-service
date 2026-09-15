@@ -1,64 +1,83 @@
 # rag-qa-service
 
-A retrieval-augmented question-answering API: upload PDF, text or markdown documents
-and ask questions about them. Documents are parsed, chunked, embedded and indexed on a
-background worker, so uploads return immediately and progress is polled. Questions are
-answered by a language model restricted to the retrieved passages, and every answer
-comes back with its sources and their similarity scores.
+[![tests](https://github.com/asitgiri1234/rag-qa-service/actions/workflows/tests.yml/badge.svg)](https://github.com/asitgiri1234/rag-qa-service/actions/workflows/tests.yml)
+![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.141-009688?logo=fastapi&logoColor=white)
+![Chroma](https://img.shields.io/badge/vector%20store-Chroma-FF6446)
+![No LangChain](https://img.shields.io/badge/LangChain%20%2F%20LlamaIndex-none-lightgrey)
 
-Chunking and retrieval are written by hand. There is no LangChain and no LlamaIndex —
-see [Design decisions](#design-decisions).
+**A retrieval-augmented question-answering API with a hand-written retrieval pipeline.**
+Upload PDF, text or Markdown documents. They are parsed, chunked, embedded and indexed on
+a background worker. Then ask questions: answers come only from the retrieved passages,
+with inline citations and the similarity score of every source.
 
-- **[EXPLANATIONS.md](EXPLANATIONS.md)** — chunk-size measurement, an observed
-  retrieval failure, and how the similarity floor was set. Every number comes from a
-  file in this repo.
-- **[docs/architecture.md](docs/architecture.md)** — components and data flow.
-- **[eval/](eval/)** — the corpus, question set, sweep results and failure report.
+Chunking, scoring, ranking and context assembly are our own code, with no LangChain or
+LlamaIndex. Every design choice below is backed by a measurement you can re-run from
+this repository.
 
----
-
-## Architecture
-
-Two pipelines that share exactly one component: the embedder.
-
-### Ingestion (asynchronous)
-
-`POST /documents` validates the upload, streams it to disk, writes a `pending` row to
-SQLite, puts the job on an in-process queue and returns **202** in milliseconds. A
-single daemon worker thread then runs the pipeline off the request path:
-
-```
-parse → chunk → embed → store in Chroma → status=completed
-```
-
-Each phase is timed separately. Any failure sets `status=failed` with the error
-message; a job is never left stuck at `processing`. Progress is read back through
-`GET /documents/{id}`.
-
-### Query (synchronous)
-
-`POST /query` embeds the question **with the same model used at ingestion**, searches
-Chroma for the top *k* chunks, and discards anything below the similarity floor. If
-nothing clears the floor it returns a plain "no relevant content" answer and **does not
-call the language model** — generating from context already judged irrelevant produces
-a confident wrong answer. Otherwise the surviving chunks are numbered into the prompt
-and the model is instructed to answer only from them and cite the markers inline.
-
-The embedder being shared is not an implementation detail. Encoding documents with one
-model and questions with another places the two sets of vectors in unrelated spaces;
-scores stay plausible, ranking becomes meaningless, and nothing raises an error.
+![Demo UI answering a question with cited sources, similarity scores and timings](docs/images/demo-ui.png)
 
 ---
 
-## Setup
+## Contents
 
-### Prerequisites
+- [Highlights](#highlights)
+- [Results at a glance](#results-at-a-glance)
+- [Quick start](#quick-start)
+- [Architecture](#architecture)
+- [Project structure](#project-structure)
+- [Configuration](#configuration)
+- [API reference](#api-reference)
+- [Evaluation](#evaluation)
+- [Testing](#testing)
+- [Design decisions](#design-decisions)
+- [Known limitations and roadmap](#known-limitations-and-roadmap)
+- [Further reading](#further-reading)
 
-- Python 3.11 or newer
-- A Groq API key — <https://console.groq.com/keys>
-- ~2 GB of disk for PyTorch and the embedding model (CPU only; no GPU needed)
+---
 
-### Install
+## Highlights
+
+- **Token-exact chunking.** Chunks are sized in word-piece tokens from the embedding
+  model's own tokenizer, not in characters. The chunker **refuses** to produce a chunk
+  longer than the model's 256-token limit, because the model would silently cut it off.
+- **Scores returned with every answer.** Each source comes back with its cosine
+  similarity, and every retrieval logs its latency and all its scores. A bad answer can
+  then be traced to either weak retrieval or a bad prompt.
+- **Refuses rather than guesses.** If no passage clears the similarity floor, the LLM
+  is **not called**. The service returns an explicit "no relevant content" answer
+  instead of generating from irrelevant context.
+- **Uploads return immediately.** An upload returns `202` in milliseconds. A dedicated
+  worker thread does the parsing and embedding, and job state lives in SQLite. A job is
+  never left stuck at `processing`, even across restarts.
+- **One embedding model for both sides.** Documents and questions are encoded by the
+  same model instance. Chroma's built-in embedding function is deliberately disabled,
+  so it cannot quietly embed text with a second model.
+- **Uploads are validated.** Extension, content type, size, and PDF magic bytes are all
+  checked. Errors share one JSON shape, requests are rate-limited, and stack traces
+  never reach the client.
+- **Tested.** 109 tests; the language model is mocked, so the suite needs no API key.
+
+## Results at a glance
+
+Measured on the committed evaluation corpus (4 documents, 22 questions, 25 live queries).
+The method and caveats are in [EXPLANATIONS.md](EXPLANATIONS.md).
+
+| What was measured | Result |
+|---|---|
+| Retrieval latency | **p50 32 ms · p95 42 ms · p99 47 ms**, about 0.6% of total response time |
+| Separation of answerable vs. unanswerable questions | Weakest answerable **0.300**, strongest unanswerable **0.138**. The floor of `0.25` sits in the gap |
+| Refusal rate over 25 live queries | **0.12**: exactly the 3 out-of-domain questions, no answerable question refused |
+| Chunks cut off by the model at 300- / 500-token chunk sizes | **38% / 60%**, which is why the chunker enforces the 256 ceiling |
+| Mean top-1 similarity, 100 → 500-token chunks | **0.68 → 0.49**: similarity drops as chunks grow |
+| Adversarial retrieval (paraphrase, boundary-spanning, multi-hop) | Answer retrieved for 8 of 10; both failures analysed with proposed fixes |
+
+---
+
+## Quick start
+
+**Prerequisites:** Python 3.11+, a [Groq API key](https://console.groq.com/keys), and
+about 2 GB of disk for PyTorch and the embedding model. It runs on CPU; no GPU is needed.
 
 ```bash
 git clone https://github.com/asitgiri1234/rag-qa-service
@@ -67,68 +86,163 @@ cd rag-qa-service
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+
+cp .env.example .env               # then set GROQ_API_KEY
+uvicorn app.main:app --reload
 ```
 
-### Configure
+Then open:
+
+| URL | What |
+|---|---|
+| <http://127.0.0.1:8000/> | Demo UI: upload, pick documents, ask, inspect sources |
+| <http://127.0.0.1:8000/docs> | Interactive OpenAPI docs |
+| <http://127.0.0.1:8000/metrics/summary> | Live latency and similarity metrics |
+
+The first start downloads the embedding model (about 90 MB) into the HuggingFace cache.
+
+To try it with the sample corpus:
 
 ```bash
-cp .env.example .env
+curl -X POST http://127.0.0.1:8000/documents -F "file=@eval/corpus/vector_stores.md;type=text/markdown"
+
+curl -X POST http://127.0.0.1:8000/query \
+  -H "Content-Type: application/json" \
+  -d '{"question": "What index structure does Chroma use?"}'
 ```
 
-Then set `GROQ_API_KEY` in `.env`. Everything else has a working default.
+> **Tip:** installing the CPU-only build of PyTorch is much faster and smaller:
+> `pip install --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt`
+
+---
+
+## Architecture
+
+Two pipelines that share exactly one component: the embedder.
+
+```mermaid
+flowchart LR
+    subgraph ING["Ingestion · async"]
+        direction TB
+        U["POST /documents"] --> V["Validate and<br/>stream to disk"]
+        V --> Q[["queue.Queue"]]
+        Q --> W["Worker thread"]
+        W --> P["Parse"] --> C["Chunk<br/><i>word-piece tokens</i>"]
+    end
+
+    E(("Embedder<br/>all-MiniLM-L6-v2<br/>384-dim · 256 tok"))
+
+    subgraph QRY["Query · sync"]
+        direction TB
+        QQ["POST /query"] --> R["Search top-k"]
+        R --> F{"any score ≥<br/>min_similarity?"}
+        F -- no --> X["Refuse<br/><i>LLM not called</i>"]
+        F -- yes --> G["Groq LLM<br/>answer from context only"]
+        G --> A["Answer + cited sources<br/>+ similarity scores"]
+    end
+
+    C --> E
+    E --> VS[("Chroma<br/>cosine")]
+    QQ -. question .-> E
+    VS --> R
+    V --> DB[("SQLite<br/>job status")]
+    W --> DB
+```
+
+### Ingestion (asynchronous)
+
+`POST /documents` validates the upload, streams it to disk, writes a `pending` row to
+SQLite, puts the job on an in-process queue and returns **202**. A single daemon worker
+thread then runs `parse → chunk → embed → store → completed`, timing each phase
+separately. Any failure sets `status=failed` with the error message. On startup, rows
+orphaned at `processing` by a restart are also marked failed.
+
+### Query (synchronous)
+
+`POST /query` embeds the question **with the same model used at ingestion**, fetches
+the top *k* chunks from Chroma, and discards anything below the similarity floor. If
+nothing is left, it returns a refusal without calling the LLM. Otherwise the remaining
+chunks are numbered into the prompt, and the model is instructed to answer only from
+them and cite the numbers inline.
+
+The shared embedder is a correctness requirement. If documents and questions are
+encoded by different models, their vectors live in unrelated spaces: scores still look
+plausible, the ranking becomes meaningless, and nothing raises an error.
+
+Full component and data-flow description: [docs/architecture.md](docs/architecture.md).
+
+---
+
+## Project structure
+
+```
+app/
+├── main.py              App factory, lifespan, worker start/stop, model warm-up
+├── config.py            Settings (pydantic-settings, .env)
+├── api/                 HTTP layer
+│   ├── documents.py     Upload, status, list, delete
+│   ├── query.py         Retrieve → generate → respond with scores
+│   ├── metrics.py       Aggregated percentiles
+│   ├── limits.py        Shared rate limiter
+│   └── errors.py        Uniform error envelope
+├── core/                Pipeline, one responsibility per module
+│   ├── parsers.py       PDF / TXT / MD → [(page, text)]
+│   ├── chunking.py      Structure-aware splitting on a token budget (pure)
+│   ├── tokenization.py  Word-piece counting (isolates the tokenizer I/O)
+│   ├── embeddings.py    One model, batched, L2-normalised
+│   ├── vectorstore.py   VectorStore protocol + Chroma implementation
+│   ├── retrieval.py     Embed, search, apply floor, log latency + scores
+│   ├── generation.py    Prompt assembly, Groq call, retry
+│   ├── ingest.py        Ingestion pipeline with per-phase timings
+│   ├── worker.py        Queue + daemon thread
+│   └── metrics.py       JSONL recording and aggregation
+├── models/              Pydantic request/response schemas
+├── storage/db.py        SQLite job state (stdlib sqlite3, no ORM)
+└── static/index.html    Demo UI: single file, no build step
+tests/                   109 tests (pytest)
+scripts/                 Local ingestion, chunk sweep, failure finder, fixtures
+eval/                    Corpus, question sets, committed results
+docs/                    Architecture notes and images
+```
+
+---
+
+## Configuration
+
+All settings are read from the environment or `.env`. Only `GROQ_API_KEY` is required.
 
 | Variable | Default | Meaning |
 |---|---|---|
 | `GROQ_API_KEY` | *(required)* | Groq API key |
-| `EMBEDDING_MODEL` | `sentence-transformers/all-MiniLM-L6-v2` | Must be the same for ingestion and query |
+| `EMBEDDING_MODEL` | `sentence-transformers/all-MiniLM-L6-v2` | Used for both ingestion and query |
 | `LLM_MODEL` | `openai/gpt-oss-120b` | Groq chat model |
 | `CHUNK_SIZE_TOKENS` | `180` | Word-piece tokens per chunk; must be ≤ 256 |
 | `CHUNK_OVERLAP_TOKENS` | `40` | Tokens carried into the next chunk |
 | `TOP_K` | `5` | Chunks retrieved per question |
-| `MIN_SIMILARITY` | `0.25` | Below this a chunk is discarded |
+| `MIN_SIMILARITY` | `0.25` | Chunks scoring below this are discarded |
 | `MAX_UPLOAD_MB` | `20` | Upload size cap |
 | `MAX_ANSWER_TOKENS` | `700` | Cap on generated answer length |
+| `GROQ_TIMEOUT_S` | `30` | Timeout for the Groq API call |
 | `WARM_START` | `true` | Load the embedding model at startup, not on first upload |
-| `CHROMA_PATH` / `SQLITE_PATH` / `METRICS_PATH` | under `data/` | Runtime state |
+| `DATA_DIR` / `CHROMA_PATH` / `SQLITE_PATH` / `METRICS_PATH` | under `data/` | Runtime state |
 
-> **On `LLM_MODEL`:** Groq has decommissioned `llama-3.3-70b-versatile`; it now returns
-> `404 model_not_found`. The default here was verified against Groq's live `/models`
-> endpoint. If your account exposes a different set, override `LLM_MODEL`.
-
-### Run
-
-```bash
-uvicorn app.main:app --reload
-```
-
-First start downloads the embedding model (~90 MB) into the HuggingFace cache.
-Interactive docs at <http://127.0.0.1:8000/docs>.
-
-### Demo UI
-
-Open <http://127.0.0.1:8000/> for a small browser client: upload documents, watch
-their status move from `pending` to `completed`, optionally tick documents to restrict
-the search, then ask questions and see the answer with each source's page, chunk and
-similarity score, plus retrieval and generation timings.
-
-It is a thin client, not part of the system under evaluation: one static file,
-[`app/static/index.html`](app/static/index.html), plain HTML/CSS/JS with no build step
-and no dependencies, calling only the public endpoints documented below.
-
-### Test
-
-```bash
-pytest                 # full suite (109 tests)
-pytest -m "not slow"   # 98 tests; skips those that load the embedding model
-```
-
-`-m "not slow"` still downloads the tokenizer (~500 KB) on first run, since chunking
-is measured in that tokenizer's word-piece tokens. It does not load the ~90 MB
-embedding model.
+> **Note on `LLM_MODEL`:** Groq has decommissioned `llama-3.3-70b-versatile`; it now
+> returns `404 model_not_found`. The default was checked against Groq's live `/models`
+> endpoint. If your account lists different models, override `LLM_MODEL`.
 
 ---
 
 ## API reference
+
+| Method | Path | Purpose | Rate limit |
+|---|---|---|---|
+| `GET` | `/health` | Liveness and version | none |
+| `POST` | `/documents` | Upload a document (returns `202`) | 10/min |
+| `GET` | `/documents/{id}` | Processing status of one document | 30/min |
+| `GET` | `/documents` | List documents (`limit`, `offset`) | 30/min |
+| `DELETE` | `/documents/{id}` | Remove a document, its chunks and its file | 30/min |
+| `POST` | `/query` | Ask a question | 20/min |
+| `GET` | `/metrics/summary` | Latency percentiles and similarity distribution | 30/min |
 
 All errors share one shape:
 
@@ -136,19 +250,10 @@ All errors share one shape:
 { "error": { "type": "not_found", "message": "no document abc" } }
 ```
 
-### `GET /health`
+<details>
+<summary><b><code>POST /documents</code></b>: upload</summary>
 
-```bash
-curl http://127.0.0.1:8000/health
-```
-
-```json
-{ "status": "ok", "version": "0.1.0" }
-```
-
-### `POST /documents` — upload
-
-Accepts `.pdf`, `.txt`, `.md`. Rate limit **10/minute**.
+Accepts `.pdf`, `.txt`, `.md`.
 
 ```bash
 curl -X POST http://127.0.0.1:8000/documents \
@@ -163,8 +268,9 @@ curl -X POST http://127.0.0.1:8000/documents \
 }
 ```
 
-`202 Accepted`. Validation: extension, declared content type, non-empty, size under
-`MAX_UPLOAD_MB`, and for PDFs the `%PDF-` magic bytes — the extension is not trusted.
+Validation covers extension, declared content type, non-empty body, size under
+`MAX_UPLOAD_MB`, and, for PDFs, the `%PDF-` magic bytes. The file extension alone is
+not trusted.
 
 | Failure | Status | `error.type` |
 |---|---|---|
@@ -174,9 +280,10 @@ curl -X POST http://127.0.0.1:8000/documents \
 | Over `MAX_UPLOAD_MB` | 413 | `payload_too_large` |
 | More than 10 uploads/minute | 429 | `rate_limit_exceeded` |
 
-### `GET /documents/{id}` — status
+</details>
 
-Rate limit **30/minute**.
+<details>
+<summary><b><code>GET /documents/{id}</code></b>: status</summary>
 
 ```bash
 curl http://127.0.0.1:8000/documents/f248696c-f271-4635-b094-ca1603fad244
@@ -184,10 +291,10 @@ curl http://127.0.0.1:8000/documents/f248696c-f271-4635-b094-ca1603fad244
 
 ```json
 {
-  "document_id": "f3104d55-bb92-449f-b0e0-2a3b38f3cffb",
-  "filename": "retrieval_evaluation.txt",
-  "content_type": "application/octet-stream",
-  "size_bytes": 3835,
+  "document_id": "f248696c-f271-4635-b094-ca1603fad244",
+  "filename": "vector_stores.md",
+  "content_type": "text/markdown",
+  "size_bytes": 3700,
   "status": "completed",
   "chunk_count": 6,
   "error": null,
@@ -196,10 +303,13 @@ curl http://127.0.0.1:8000/documents/f248696c-f271-4635-b094-ca1603fad244
 }
 ```
 
-`status` is one of `pending`, `processing`, `completed`, `failed`. On `failed`, `error`
-carries the reason. `404` if the id is unknown.
+`status` is one of `pending`, `processing`, `completed`, `failed`. When it is `failed`,
+`error` holds the reason. Unknown ids return `404`.
 
-### `GET /documents` — list
+</details>
+
+<details>
+<summary><b><code>GET /documents</code></b>: list</summary>
 
 ```bash
 curl "http://127.0.0.1:8000/documents?limit=1&offset=0"
@@ -207,16 +317,31 @@ curl "http://127.0.0.1:8000/documents?limit=1&offset=0"
 
 ```json
 {
-  "documents": [ { "document_id": "f3104d55-...", "filename": "retrieval_evaluation.txt", "status": "completed", "chunk_count": 6, "error": null, "created_at": "2026-09-12T18:22:51+00:00", "completed_at": "2026-09-12T18:22:51+00:00", "content_type": "application/octet-stream", "size_bytes": 3835 } ],
+  "documents": [
+    {
+      "document_id": "f248696c-f271-4635-b094-ca1603fad244",
+      "filename": "vector_stores.md",
+      "content_type": "text/markdown",
+      "size_bytes": 3700,
+      "status": "completed",
+      "chunk_count": 6,
+      "error": null,
+      "created_at": "2026-09-12T18:22:51+00:00",
+      "completed_at": "2026-09-12T18:22:51+00:00"
+    }
+  ],
   "total": 4,
   "limit": 1,
   "offset": 0
 }
 ```
 
-### `DELETE /documents/{id}`
+</details>
 
-Removes the chunks from Chroma, the row from SQLite, and the uploaded file.
+<details>
+<summary><b><code>DELETE /documents/{id}</code></b>: delete</summary>
+
+Removes the document's chunks from Chroma, its row from SQLite, and the uploaded file.
 
 ```bash
 curl -X DELETE http://127.0.0.1:8000/documents/f248696c-f271-4635-b094-ca1603fad244
@@ -230,9 +355,13 @@ curl -X DELETE http://127.0.0.1:8000/documents/f248696c-f271-4635-b094-ca1603fad
 }
 ```
 
-### `POST /query` — ask a question
+</details>
 
-Rate limit **20/minute**.
+<details open>
+<summary><b><code>POST /query</code></b>: ask a question</summary>
+
+Request fields: `question` (required, 1–1000 chars); `top_k` (1–20, defaults to
+`TOP_K`); `document_ids` (optional; limits retrieval to those documents).
 
 ```bash
 curl -X POST http://127.0.0.1:8000/query \
@@ -265,10 +394,7 @@ curl -X POST http://127.0.0.1:8000/query \
 }
 ```
 
-Request fields: `question` (1–1000 chars, required), `top_k` (1–20, defaults to
-`TOP_K`), `document_ids` (optional, restricts retrieval to those documents).
-
-When nothing clears the similarity floor, the model is not called:
+If nothing clears the similarity floor, the model is not called:
 
 ```bash
 curl -X POST http://127.0.0.1:8000/query \
@@ -286,10 +412,13 @@ curl -X POST http://127.0.0.1:8000/query \
 }
 ```
 
-`503` with `error.type: service_unavailable` if the language model cannot be reached
-after one retry.
+If the language model is still unreachable after one retry, the response is `503` with
+`error.type: service_unavailable`.
 
-### `GET /metrics/summary`
+</details>
+
+<details>
+<summary><b><code>GET /metrics/summary</code></b>: metrics</summary>
 
 ```bash
 curl http://127.0.0.1:8000/metrics/summary
@@ -303,7 +432,7 @@ curl http://127.0.0.1:8000/metrics/summary
     "refused": 3,
     "refusal_rate": 0.12,
     "retrieval_ms": { "count": 25, "mean": 32.942, "p50": 32.115, "p95": 41.809, "p99": 47.278, "min": 25.45, "max": 48.771 },
-    "generation_ms": { "count": 22, "p50": 5287.106, "p95": 8810.322 },
+    "generation_ms": { "count": 22, "p50": 5287.106, "p95": 8810.322, "...": "..." },
     "top_similarity": {
       "mean": 0.5808, "p50": 0.6097, "p95": 0.7737, "min": 0.2999, "max": 0.7925,
       "distribution": { "0.2-0.3": 1, "0.3-0.4": 1, "0.4-0.5": 5, "0.5-0.6": 2, "0.6-0.7": 10, "0.7-0.8": 3 }
@@ -318,103 +447,135 @@ curl http://127.0.0.1:8000/metrics/summary
 }
 ```
 
+</details>
+
 ---
 
-## Scripts
+## Evaluation
+
+The [`eval/`](eval/) directory holds everything needed to reproduce the numbers above:
+a four-document corpus (Markdown, text and PDF), the question sets, and the committed
+results.
 
 ```bash
-# Ingest files directly, without the API
-python scripts/ingest_local.py eval/corpus/*.md
-
-# Sweep chunk configurations -> eval/eval_results.json
+# Sweep chunk size / overlap configurations  -> eval/eval_results.json
 python scripts/eval_chunking.py
 
-# Run adversarial questions -> eval/failure_report.md
+# Run adversarial questions against the index -> eval/failure_report.{json,md}
 python scripts/find_failures.py
+
+# Ingest files directly, without the API
+python scripts/ingest_local.py eval/corpus/*.md
 
 # Regenerate the PDF test fixture
 python scripts/make_fixtures.py
 ```
 
+| size / overlap | chunks | truncated by model | top-1 doc correct | mean top-1 similarity |
+|---|---|---|---|---|
+| 100 / 20 | 40 | 0 | 1.000 | **0.681** |
+| **180 / 40** *(default)* | 23 | 0 | 0.955 | 0.581 |
+| 300 / 60 | 13 | **5 of 13** | 1.000 | 0.541 |
+| 500 / 100 | 10 | **6 of 10** | 0.864 | 0.488 |
+
+[EXPLANATIONS.md](EXPLANATIONS.md) explains why 180/40 was chosen over the
+higher-scoring 100/20, why recall@5 tells you nothing at this corpus size, and walks
+through one retrieval failure in detail.
+
+---
+
+## Testing
+
+```bash
+pytest                 # full suite: 109 tests
+pytest -m "not slow"   # 98 tests; skips the ones that load the embedding model
+```
+
+The LLM is mocked everywhere, so no API key is needed. `-m "not slow"` still downloads
+the tokenizer (about 500 KB) on first run, because chunking is measured in that
+tokenizer's tokens; it skips the 90 MB embedding model. CI runs the full suite on every
+push via [GitHub Actions](.github/workflows/tests.yml).
+
 ---
 
 ## Design decisions
 
-**FastAPI.** Pydantic validation is native rather than bolted on, so request and
-response shapes are declared once and enforced automatically, and the OpenAPI document
-is generated from the same declarations. Async request handling matters specifically
-for upload streaming.
+**FastAPI.** Pydantic validation is built in, so request and response shapes are
+declared once and enforced automatically, and the OpenAPI document is generated from
+those same declarations. Async request handling matters specifically for streaming
+uploads.
 
-**No LangChain, no LlamaIndex — deliberately.** Chunking and retrieval *are* the
-deliverable here. A framework would supply a `RecursiveCharacterTextSplitter` and a
-`VectorStoreRetriever` and leave nothing to reason about: the chunk boundaries, the
-token budget, the score conversion and the similarity floor would all be defaults
-chosen by someone else, and the interesting decisions would be invisible. Writing them
-by hand is what makes the 256-token ceiling in `chunking.py`, the `1 - distance`
-conversion in `vectorstore.py` and the floor in `retrieval.py` explicit, testable and
-defensible. The frameworks also carry large dependency trees and a habit of changing
-their abstractions between minor versions.
+**No LangChain, no LlamaIndex, on purpose.** Chunking and retrieval are the core of
+this project. A framework would supply a `RecursiveCharacterTextSplitter` and a
+`VectorStoreRetriever` and leave nothing to reason about: chunk boundaries, token
+budget, score conversion and similarity floor would all be someone else's defaults.
+Writing them by hand makes the 256-token ceiling in `chunking.py`, the
+`1 - distance` conversion in `vectorstore.py` and the floor in `retrieval.py` explicit,
+testable and defensible. It also avoids their large dependency trees and frequent API
+churn.
 
-**sentence-transformers rather than an embedding API.** Groq has no embeddings
-endpoint, so an API-based embedder would mean a second vendor. Running locally also
-removes per-query network latency from retrieval — measured p50 is 32 ms end to end —
-and makes the 256-token ceiling inspectable at runtime rather than a documented claim.
-`all-MiniLM-L6-v2` runs on CPU at ~21 chunks/second, which is ample here. The cost is
-the ~2 GB PyTorch install.
+**sentence-transformers instead of an embedding API.** Groq has no embeddings
+endpoint, so an API embedder would mean adding a second vendor. Running locally also
+keeps network latency out of retrieval (measured p50 is 32 ms end to end) and makes the
+256-token ceiling something the code can check at runtime. `all-MiniLM-L6-v2` embeds
+about 21 chunks/second on CPU. The cost is the ~2 GB PyTorch install.
 
-**A worker thread rather than Celery.** `BackgroundTasks` was rejected outright: it
-occupies a thread from the pool Starlette uses for every synchronous endpoint, and
-CPU-bound embedding there would stall unrelated requests. An explicit
-`queue.Queue` plus one daemon thread gives a real out-of-band worker with zero
-infrastructure, job state that survives in SQLite, and an observable queue depth.
-Celery with Redis or RabbitMQ is the scale-up path — it moves the same contract into
-separate processes so work survives a restart and spreads across machines — but it is
-a deployment change, not a redesign: only `enqueue_ingestion` would be rewritten. For
-a single-instance service it would be infrastructure without benefit.
+**A worker thread instead of `BackgroundTasks` or Celery.** `BackgroundTasks` runs in
+the same thread pool Starlette uses for synchronous endpoints, so CPU-bound embedding
+there would stall unrelated requests. A `queue.Queue` plus one daemon thread is a real
+out-of-band worker with no extra infrastructure, and job state persists in SQLite.
+Celery with Redis would be the way to scale out. That is a deployment change rather
+than a redesign: only `enqueue_ingestion` would change.
 
 **Chroma behind a `VectorStore` protocol.** Chroma persists to a local directory with
-no server to run, and supports metadata filtering before the vector search — which is
-what makes per-document queries correct rather than a post-filter that silently returns
-fewer results than requested. But it is reached through four methods (`add_chunks`,
-`search`, `delete_document`, `count`), so swapping in FAISS or pgvector is a new class
-rather than a rewrite of retrieval. Defining that interface cost close to nothing.
+no server to run. It also filters on metadata *before* the vector search, which makes
+per-document queries correct; filtering afterwards would silently return fewer results
+than requested. Retrieval reaches it through four methods (`add_chunks`, `search`,
+`delete_document`, `count`), so moving to FAISS or pgvector means writing a new class,
+not rewriting retrieval.
 
-Two Chroma defaults are overridden deliberately: the collection is created with cosine
-space (the default is L2), and **no embedding function is registered**, because Chroma
-would otherwise attach its own model and embed raw text with it — putting two different
-models in one system, which is the exact failure the shared-embedder rule exists to
-prevent.
+Two Chroma defaults are overridden. Collections use **cosine** space instead of L2.
+**No embedding function is registered**, because Chroma would otherwise embed raw text
+with its own model, which is exactly the two-model failure described above.
 
-**Chunking measured in word-piece tokens.** A character budget maps to a wildly
-variable token count — prose runs ~1.3 tokens per word, dense technical text three to
-four — so a character-based chunker silently emits chunks whose tails never reach the
-embedding. See [EXPLANATIONS.md](EXPLANATIONS.md#1-chunk-size).
+**Chunk size measured in word-piece tokens.** A character budget translates into a very
+unpredictable token count: prose runs ~1.3 tokens per word, while dense technical text
+runs three to four. A character-based chunker therefore silently produces chunks whose
+ends never reach the embedding. See [EXPLANATIONS.md](EXPLANATIONS.md#1-chunk-size).
 
 ---
 
-## Known limitations
+## Known limitations and roadmap
 
-- **Single process, single worker.** The queue is in-memory, so a restart loses queued
-  jobs; rows left at `processing` are failed at startup rather than resumed. Rate
-  limiting is per-process, so behind multiple workers each enforces its own budget.
-- **No authentication.** Every endpoint is open. This is a demonstration service.
-- **Scanned PDFs are rejected, not OCR'd.** `pypdf` extracts no text from images, so
-  such a document fails with a clear message rather than indexing nothing silently.
-- **Dense retrieval only.** No BM25, no reranker. The observed consequence is measured
-  in [EXPLANATIONS.md](EXPLANATIONS.md#2-a-retrieval-failure-observed): a question
-  phrased in synonyms scored 0.1010 against the chunk that answers it, versus 0.3875
-  for the same question in the source's wording.
-- **Multi-hop questions are not handled.** A question needing facts from two distant
-  sections retrieves whichever half scores higher. One of three multi-hop test
-  questions failed outright.
-- **The evaluation corpus is small** — 4 documents, 23 chunks, 22 questions. recall@5
-  saturates at 1.000 for every chunk configuration and is therefore uninformative at
-  this size; the conclusions rest on mean top-1 similarity and top-1 document accuracy
-  instead. This is stated plainly rather than papered over.
-- **The similarity floor has thin margin.** 0.25 sits 0.05 below the weakest answerable
-  question observed, and one paraphrased question already falls below it. It should be
-  re-measured on a larger corpus.
-- **Generation dominates latency** — p50 5287 ms against retrieval's 32 ms. Responses
-  are not streamed, so the client waits for the whole answer.
-- **No incremental re-indexing.** Changing the chunk configuration requires
-  re-ingesting every document.
+**Limitations**
+
+- **Single process, single worker.** The queue lives in memory, so a restart loses
+  queued jobs; rows left at `processing` are marked failed at startup rather than
+  resumed. Rate limits are per process.
+- **No authentication.** Every endpoint is open; this is a demonstration service.
+- **Small evaluation corpus.** Four documents is enough to show the effects above but
+  not to fine-tune thresholds for production. See the caveats in
+  [EXPLANATIONS.md](EXPLANATIONS.md#3-the-metric-worth-tracking).
+
+**Next steps, in priority order**
+
+1. **Cross-encoder reranking** of the top 20 results, to fix the paraphrase failure
+   documented in the failure report.
+2. **Hybrid retrieval** (BM25 + dense, merged with reciprocal rank fusion) for exact
+   identifiers and numbers.
+3. **Query decomposition** for multi-hop questions whose answers span documents.
+4. **Streaming generation.** Generation takes about 160× longer than retrieval at the
+   median, so this is where latency work would pay off.
+5. **Durable job queue** (Celery + Redis) and **API-key authentication** for a
+   multi-instance deployment.
+
+---
+
+## Further reading
+
+| Document | Contents |
+|---|---|
+| [EXPLANATIONS.md](EXPLANATIONS.md) | How chunk size was chosen, a retrieval failure analysed, how the similarity floor was set |
+| [docs/architecture.md](docs/architecture.md) | Components, data flow, data stores, module boundaries |
+| [eval/failure_report.md](eval/failure_report.md) | Every adversarial question with ranked results and scores |
+| [eval/eval_results.json](eval/eval_results.json) | Raw chunk-size sweep output |
